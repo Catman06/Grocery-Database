@@ -4,10 +4,10 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
+    <title>Grocery Database</title>
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">Table</RouterLink>
+        <RouterLink to="/table">Table</RouterLink>
         <RouterLink to="/scanner">Scanner</RouterLink>
       </nav>
     </div>
@@ -22,9 +22,12 @@ header {
   max-height: 100vh;
 }
 
-.logo {
+title {
   display: block;
+  font-size:2.5rem;
+  font-weight:700;
   margin: 0 auto 2rem;
+  background-color: 
 }
 
 nav {
@@ -32,11 +35,11 @@ nav {
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
-  background-color: #152b2b;
+  background-color: var(--accent-green);
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: var(--font-color);
 }
 
 nav a.router-link-exact-active:hover {
@@ -52,7 +55,7 @@ nav a {
 nav a:first-of-type {
   border: 0;
 }
-
+/* Horizontal Display */
 @media (min-width: 1024px) {
   header {
     display: flex;
