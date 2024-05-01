@@ -1,18 +1,14 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
+    <title>Grocery Database</title>
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/table">Table</RouterLink>
+        <RouterLink to="/scanner">Scanner</RouterLink>
       </nav>
     </div>
   </header>
@@ -26,9 +22,12 @@ header {
   max-height: 100vh;
 }
 
-.logo {
+title {
   display: block;
+  font-size:2.5rem;
+  font-weight:700;
   margin: 0 auto 2rem;
+  background-color: 
 }
 
 nav {
@@ -36,10 +35,11 @@ nav {
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
+  background-color: var(--accent-green);
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: var(--font-color);
 }
 
 nav a.router-link-exact-active:hover {
@@ -55,7 +55,7 @@ nav a {
 nav a:first-of-type {
   border: 0;
 }
-
+/* Horizontal Display */
 @media (min-width: 1024px) {
   header {
     display: flex;
