@@ -1,12 +1,12 @@
 <script setup>
-    defineProps(['name', 'number', 'favorite'])
+    defineProps(['code', 'name', 'number', 'favorite'])
 </script>
 
 <template>
-    <tr class="item">
+    <tr v-bind:class="code">
         <td class="name">{{ name }}</td>
         <td>{{ number }}</td>
-        <td>Stuff3</td>
+        <td class="favorite">Stuff3</td>
     </tr>
 </template>
 

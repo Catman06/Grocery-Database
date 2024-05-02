@@ -57,6 +57,7 @@ nav a {
 nav a:first-of-type {
   border: 0;
 }
+
 /* Horizontal Display */
 @media (min-width: 1024px) {
 title {

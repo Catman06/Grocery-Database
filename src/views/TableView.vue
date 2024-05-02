@@ -3,11 +3,11 @@ import TableItem from '../components/TableItem.vue'
 import { ref } from "vue";
 
 let example_items = [
-  {name: 'A name1' , number: 1 },
-  {name: 'A name that is quite a long one, too long in fact2' , number: 2 },
-  {name: 'A name3' , number: 3 },
-  {name: 'A name4' , number: 4 },
-  {name: 'A name5' , number: 5 }
+  {code: "1", name: 'A name1' , number: 1 },
+  {code: "2", name: 'A name that is quite a long one, too long in fact2' , number: 2 },
+  {code: "3", name: 'A name3' , number: 3 },
+  {code: "4", name: 'A name4' , number: 4 },
+  {code: "5", name: 'A name5' , number: 5 }
 ]
 
 </script>
@@ -22,8 +22,9 @@ let example_items = [
         </tr> 
       </thead>
       <tbody>
-        <TableItem 
+        <TableItem class="item"
           v-for="info in example_items"
+          :code="info.code"
           :name="info.name"
           :number="info.number"
         />
