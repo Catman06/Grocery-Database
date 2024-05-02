@@ -8,16 +8,33 @@
     --background: #ffffff;
     --accent-green: #568356;
     --accent-grey: #9c9c9c;
+    --accent-light-grey: #e6e6e6;
     --font-color: #000000;
 
+    /* Navbar */
     --nav-active: rgb(100, 172, 100);
     --nav-inactive: ;
+
+    /* Table Items */
+    --item-hover: #87b687;
+    --item-active: #465e46;
 }
 /* Color Variables (Dark Mode */
 @media (prefers-color-scheme: dark) {
 :root {
+    --background: #141414;
     --accent-green: #143d14;
     --accent-grey: #3c3c3c;
+    --accent-light-grey: #444444;
     --font-color: #eee;
+
+    /* Table Items */
+    --item-hover: #304030;
+    --item-active: #465e46;
 }
+}
+
+:root {
+    background: var(--background);
+    color: var(--font-color);
 }
