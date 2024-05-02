@@ -1,26 +1,38 @@
 <script setup>
 import TableItem from '../components/TableItem.vue'
+import { ref } from "vue";
+
+let example_items = [
+  {name: 'A name1' , number: 1 },
+  {name: 'A name that is quite a long one, too long in fact2' , number: 2 },
+  {name: 'A name3' , number: 3 },
+  {name: 'A name4' , number: 4 },
+  {name: 'A name5' , number: 5 }
+]
+
 </script>
 
 <template>
     <table class="table">
       <thead>
         <tr>
-          <th>Header1</th>
-          <th>Header2</th>
-          <th>Header3</th>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Favorite</th>
         </tr> 
       </thead>
+      <tbody>
+        <TableItem 
+          v-for="info in example_items"
+          :name="info.name"
+          :number="info.number"
+        />
+      </tbody>
 
-      <TableItem />
-      <TableItem />
-      <TableItem />
-      <TableItem />
-      <TableItem />
     </table>
-  </template>
-  
-  <style>
+</template>
+
+<style>
   /* Table */
   .table {
     --table-border-style: solid;
@@ -47,16 +59,16 @@ import TableItem from '../components/TableItem.vue'
     background-color: var(--accent-light-grey);
   }
   @media (hover: hover) {
-  .item:hover {
-    background-color: var(--item-hover);
+    .item:hover {
+      background-color: var(--item-hover);
+    }
+    .item:active {
+      background-color: var(--item-active);
+    }
   }
-  .item:active {
-    background-color: var(--item-active);
-  }
-}
 
   /* Horizontal Display */
   @media (min-width: 1024px) {
 
   }
-  </style>
+</style>
