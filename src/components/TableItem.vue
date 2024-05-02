@@ -1,14 +1,11 @@
 <template>
-    <div class="item">
-        
-    </div>
+    <tr class="item">
+        <td>Stuff1</td>
+        <td>Stuff2</td>
+        <td>Stuff3</td>
+    </tr>
 </template>
 
 <style scoped>
-.item {
-  margin-top: 2rem;
-  display: flex;
-  position: relative;
-  background-color: red;
-}
+
 </style>
