@@ -24,10 +24,12 @@ header {
 
 title {
   display: block;
+  text-align: center;
   font-size:2.5rem;
   font-weight:700;
   margin: 0 auto 2rem;
-  background-color: 
+  background-color: var(--accent-green);
+  border-radius: 20px;
 }
 
 nav {
@@ -57,29 +59,14 @@ nav a:first-of-type {
 }
 /* Horizontal Display */
 @media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+title {
+  margin: 0px;
+}
+nav {
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+}
+nav a {
+  padding: .75rem;
+}
 }
 </style>
