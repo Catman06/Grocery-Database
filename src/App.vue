@@ -7,7 +7,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <title>Grocery Database</title>
     <div class="wrapper">
       <nav>
-        <RouterLink to="/table">Table</RouterLink>
+        <RouterLink to="/">Table</RouterLink>
         <RouterLink to="/scanner">Scanner</RouterLink>
       </nav>
     </div>

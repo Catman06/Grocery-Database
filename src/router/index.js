@@ -4,7 +4,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/table',
+      path: '/',
       name: 'table',
       component: () => import('../views/TableView.vue')
     },
