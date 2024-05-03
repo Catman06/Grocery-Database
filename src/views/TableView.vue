@@ -10,6 +10,16 @@ let example_items = [
   {code: "5", name: 'A name5' , number: 5, favorite: true }
 ]
 
+// Takes the toggle-panel event and sends a close-panel event to all children but the one the inital event came from
+const closePanel = new Event('close-panel');
+function closeEventRedirect(event) {
+  Array.from(document.getElementsByClassName('item')).forEach(item => {
+    if (event.target.parentElement != item) {
+      item.dispatchEvent(closePanel);
+      console.log("close-panel Sent");
+    }
+  });
+}
 </script>
 
 <template>
@@ -21,8 +31,8 @@ let example_items = [
           <th>Favorite</th>
         </tr> 
       </thead>
-      <tbody>
-        <TableItem class="item"
+      <tbody @toggle-panel="closeEventRedirect">
+        <TableItem
           v-for="info in example_items"
           :code="info.code"
           :name="info.name"

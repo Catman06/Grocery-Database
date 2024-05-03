@@ -1,5 +1,19 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+  import { RouterLink, RouterView } from 'vue-router'
+
+</script>
+
+<script>
+  // A prototype object for an item
+  export const itemPrototype = {
+    code: "000000000000",
+    given_name: "name",
+    off_name: "name",
+    number: "0",
+    allergens: [],
+    tags: [],
+    favorite: false
+  }
 </script>
 
 <template>
@@ -63,9 +77,9 @@ nav a:first-of-type {
 title {
   margin: 0px;
 }
-nav {
+/* nav {
 
-}
+} */
 nav a {
   padding: .75rem;
 }
