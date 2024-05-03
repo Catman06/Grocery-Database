@@ -11,7 +11,7 @@ The table is the primary part of the site and will allow for the viewing, search
     <li>Barcode as text</li>
     <li>Name from OFF as text</li>
     <li>User-given Name as text</li>
-    <li>Number of items as text</li>
+    <li>Number of items as integer</li>
     <li>List of Allergens as json</li>
     <li>List of Tags as json</li>
     <li>Favorite as boolean</li>
