@@ -1,14 +1,10 @@
 <script setup>
 import TableItem from '../components/TableItem.vue'
 import { ref } from "vue";
+import database from '../assets/pretend_database.json'
 
-let example_items = [
-  {code: "1", name: 'A name1' , number: 1, favorite: true },
-  {code: "2", name: 'A name that is quite a long one, too long in fact2' , number: 2, favorite: false},
-  {code: "3", name: 'A name3' , number: 3, favorite: true },
-  {code: "4", name: 'A name4' , number: 4, favorite: false },
-  {code: "5", name: 'A name5' , number: 5, favorite: true }
-]
+console.log(database)
+let example_items = database.items
 
 // Takes the toggle-panel event and sends a close-panel event to all children but the one the inital event came from
 const closePanel = new Event('close-panel');
@@ -34,10 +30,7 @@ function closeEventRedirect(event) {
       <tbody @toggle-panel="closeEventRedirect">
         <TableItem
           v-for="info in example_items"
-          :code="info.code"
-          :name="info.name"
-          :number="info.number"
-          :favorite="info.favorite"
+          :info="info"
         />
       </tbody>
 
@@ -69,6 +62,9 @@ function closeEventRedirect(event) {
   }
   .item:nth-of-type(even) {
     background-color: var(--accent-light-grey);
+  }
+  .item>* {
+    padding: 5px;
   }
   @media (hover: hover) {
     .item:hover {

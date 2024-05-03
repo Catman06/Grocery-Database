@@ -6,7 +6,7 @@
 /* Color Variables (Light Mode) */
 :root {
     --background: #ffffff;
-    --accent-green: #568356;
+    --accent-green: #5a835a;
     --accent-grey: #cecece;
     --accent-light-grey: #e6e6e6;
     --font-color: #000000;
@@ -18,6 +18,8 @@
     /* Table Items */
     --item-hover: #87b687;
     --item-active: #465e46;
+    --panel-color: #7e977e;
+    --panel-header-color: var(--accent-green);
 }
 /* Color Variables (Dark Mode */
 @media (prefers-color-scheme: dark) {
