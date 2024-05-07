@@ -2,7 +2,6 @@
 import TablePanel from '../components/TablePanel.vue';
 import { ref } from "vue";
 const props = defineProps(['info']);
-console.log(props.info)
 
 // Sets favTxt to * if the item is a favorite
 let favTxt = "";
@@ -12,9 +11,9 @@ if (props.info.favorite == true) {
 
 const panel = ref(false);
 
-const panelEvent = new Event('toggle-panel', { bubbles: true });
 
 // Toggles the panel, emitting an event to close all others
+const panelEvent = new Event('toggle-panel', { bubbles: true });
 function togglePanel(event) {
   event.target.dispatchEvent(panelEvent);
   panel.value = !panel.value;
