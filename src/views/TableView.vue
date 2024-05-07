@@ -48,7 +48,8 @@ function closeEventRedirect(event) {
 
   text-align: center;
   width: 100%;
-  margin-top: 2rem;
+  max-width: 1028px;
+  margin: 2rem auto;
   border-radius: 10px;
   border-spacing: 0;
   border: var(--table-border-width) var(--table-border-style) var(--table-border-color);

@@ -19,7 +19,7 @@ export const itemPrototype = {
 
 <template>
 	<header>
-		<title>Grocery Database</title>
+		<div class="title">Grocery Database</div>
 		<div class="wrapper">
 			<nav>
 				<RouterLink to="/">Table</RouterLink>
@@ -33,26 +33,24 @@ export const itemPrototype = {
 
 <style scoped>
 header {
+	display: flex;
+	width: 100%;
 	line-height: 1.5;
-	max-height: 100vh;
+	background-color: var(--accent-green);
+	align-items: center;
 }
 
-title {
-	display: block;
+.title {
+	margin: 0 1rem;
 	text-align: center;
-	font-size: 2.5rem;
+	font-size: 2rem;
 	font-weight: 700;
-	margin: 0 auto 2rem;
-	background-color: var(--accent-green);
-	border-radius: 20px;
 }
 
 nav {
-	width: 100%;
-	font-size: 12px;
+	font-size: 1rem;
 	text-align: center;
-	margin-top: 2rem;
-	background-color: var(--accent-green);
+	max-height: max-content;
 }
 
 nav a.router-link-exact-active {

@@ -39,6 +39,7 @@ function editClick(event) {
 <style scoped>
 table {
 	width: 100%;
+	border-collapse: collapse;
 }
 
 .panel {
