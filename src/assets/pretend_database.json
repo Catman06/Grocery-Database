@@ -9,6 +9,6 @@
     {"code":"7", "given_name":"A Name of an Item 7", "off_name":"OFF Name 7", "number":"7", "allergens":["Allergen 1", "Allergen 2"], "tags":["Tag 1", "Tag 2", "Tag 3"], "favorite":true},
     {"code":"8", "given_name":"A Name of an Item 8", "off_name":"OFF Name 8", "number":"8", "allergens":["Allergen 1", "Allergen 2"], "tags":["Tag 1", "Tag 2", "Tag 3"], "favorite":true},
     {"code":"9", "given_name":"A Name of an Item 9", "off_name":"OFF Name 9", "number":"9", "allergens":["Allergen 1", "Allergen 2"], "tags":["Tag 1", "Tag 2", "Tag 3"], "favorite":true},
-    {"code":"0", "given_name":"A Name of an Item 10", "off_name":"OFF Name 10", "number":"10", "allergens":["Allergen 1", "Allergen 2"], "tags":["Tag 1", "Tag 2", "Tag 3"], "favorite":true}
+    {"code":"10", "given_name":"A Name of an Item 10", "off_name":"OFF Name 10", "number":"10", "allergens":["Allergen 1", "Allergen 2"], "tags":["Tag 1", "Tag 2", "Tag 3"], "favorite":true}
   ]
 }

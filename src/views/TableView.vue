@@ -1,12 +1,15 @@
 <script setup>
 import TableItem from '../components/TableItem.vue'
-import database from '../assets/pretend_database.json'
+import EditPopup from '@/components/EditPopup.vue';
+import { useDatabaseStore } from '@/stores/database';
+import { ref } from 'vue';
 
-let example_items = database.items
+const items = useDatabaseStore().items;
 
 // Takes the toggle-panel event and sends a close-panel event to all children but the one the inital event came from
 const closePanel = new Event('close-panel');
 function closeEventRedirect(event) {
+  let dbItem = useDatabaseStore().getItemByCode(event.target.parentElement.classList.item(0));
   Array.from(document.getElementsByClassName('item')).forEach(item => {
     if (event.target.parentElement != item) {
       item.dispatchEvent(closePanel);
@@ -15,9 +18,11 @@ function closeEventRedirect(event) {
 
   // Opens the popup for editing an item
   document.getElementById('mainTable').addEventListener('edit-clicked', openEditPopup, { capture: true });
-  function openEditPopup(event) {
+}
+const popup = ref(false);
+function openEditPopup(event) {
     console.log(event);
-  }
+    popup.value = true;
 }
 </script>
 
@@ -25,16 +30,15 @@ function closeEventRedirect(event) {
   <div>
     <table id="mainTable" class="table">
       <thead>
-        <tr>
           <th>Name</th>
           <th>Number</th>
           <th>Favorite</th>
-        </tr>
       </thead>
       <tbody @toggle-panel="closeEventRedirect">
-        <TableItem v-for="info in example_items" :info="info" />
+        <TableItem v-for="info in items" :info="info" />
       </tbody>
     </table>
+    <EditPopup v-if="popup"/>
   </div>
 
 </template>

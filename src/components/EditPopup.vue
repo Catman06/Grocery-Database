@@ -1,5 +1,16 @@
 <script setup>
-const props = defineProps(['info']);
+import { useDatabaseStore } from '@/stores/database';
+const selected = useDatabaseStore().selected;
+
+if (selected == 'none') {
+	const info = useDatabaseStore().getItemByCode(1);
+} else if (selected == true) {
+	const info = useDatabaseStore().getItemByCode(props.selected.value);
+} else {
+	console.error(selected);
+}
+
+console.log(info);
 </script>
 
 <template>

@@ -64,4 +64,12 @@ table {
 .edit:active {
 	background-color: var(--accent-green);
 }
+.edit.selected:active {
+	background-color: var(--panel-color);
+}
+
+/* Adds horizontal dividers */
+td:not(:last-of-type) {
+  border-right: solid 1px;
+}
 </style>
