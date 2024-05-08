@@ -6,7 +6,7 @@ import database from '@/assets/pretend_database.json';
 export const useDatabaseStore = defineStore('database', () => {
 	// States
 	const items = ref(structuredClone(database.items));
-	const selected = ref('none');
+	const selected = ref(undefined);
 	// Getters
 
 	// Actions

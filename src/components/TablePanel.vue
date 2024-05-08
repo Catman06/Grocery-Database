@@ -13,7 +13,7 @@ function editClick(event) {
 </script>
 
 <template>
-	<tr class="panel" v-bind:class="info.code">
+	<div class="panel" v-bind:class="info.code">
 		<td colspan="3">
 			<table>
 				<thead class="panelHeader">
@@ -32,7 +32,7 @@ function editClick(event) {
 				</tbody>
 			</table>
 		</td>
-	</tr>
+	</div>
 
 </template>
 
@@ -43,6 +43,7 @@ table {
 }
 
 .panel {
+	display: table-row;
 	background-color: var(--panel-color);
 }
 
