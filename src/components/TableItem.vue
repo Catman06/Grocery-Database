@@ -15,6 +15,10 @@ const panel = ref(false);
 // Toggles the panel, emitting an event to close all others
 const panelEvent = new Event('toggle-panel', { bubbles: true });
 function togglePanel(event) {
+	if (event.key != 'Enter' && event.type != 'click') {
+		return;
+	}
+	
 	event.target.dispatchEvent(panelEvent);
 	panel.value = !panel.value;
 }
@@ -25,7 +29,7 @@ function closePanel(event) {
 </script>
 
 <template>
-	<tr v-bind:class="info.code" class="item" @click="togglePanel" @close-panel="closePanel">
+	<tr v-bind:class="info.code" class="item" role="button" aria-expanded="false" tabindex="1" @click="togglePanel" @keydown="togglePanel" @close-panel="closePanel">
 		<td class="name">{{ info.given_name }}</td>
 		<td>{{ info.number }}</td>
 		<td class="favorite">{{ favTxt }}</td>
