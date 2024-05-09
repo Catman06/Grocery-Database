@@ -1,5 +1,6 @@
 <script setup>
 import TablePanel from '../components/TablePanel.vue';
+import EditPanel from './EditPanel.vue';
 import { ref } from "vue";
 const props = defineProps(['info']);
 
@@ -11,31 +12,48 @@ if (props.info.favorite == true) {
 
 const panel = ref(false);
 
-
 // Toggles the panel, emitting an event to close all others
+// if the panel is in edit mode, exit edit mode
 const panelEvent = new Event('toggle-panel', { bubbles: true });
 function togglePanel(event) {
 	if (event.key != 'Enter' && event.type != 'click') {
 		return;
 	}
-	
+
 	event.target.dispatchEvent(panelEvent);
+	if (edit.value) {
+		edit.value = false;
+	}
 	panel.value = !panel.value;
 }
 
 function closePanel(event) {
 	panel.value = false;
+	edit.value = false;
+}
+
+// Replaces the normal display panel with the one for editing
+const edit = ref(false);
+function openEditPanel(event) {
+	panel.value = false;
+	edit.value = true;
+}
+function closeEditPanel(event) {
+	panel.value = true;
+	edit.value = false;
 }
 </script>
 
 <template>
-	<tr v-bind:class="info.code" class="item" role="button" aria-expanded="false" tabindex="1" @click="togglePanel" @keydown="togglePanel" @close-panel="closePanel">
+	<tr v-bind:class="info.code" class="item" role="button" aria-expanded="false" tabindex="1" @click="togglePanel"
+		@keydown="togglePanel" @close-panel="closePanel">
 		<td class="name">{{ info.given_name }}</td>
 		<td>{{ info.number }}</td>
 		<td class="favorite">{{ favTxt }}</td>
 	</tr>
-	<!-- Only Shows if 'panel' is true -->
-	<TablePanel v-if="panel" rowspan="3" :info="info" />
+	<slot></slot>
+	<TablePanel v-if="panel" rowspan="3" :info="info" @edit-clicked="openEditPanel"/>
+	<EditPanel v-if="edit" @edit-clicked="closeEditPanel" />
 </template>
 
 <style scoped>

@@ -9,13 +9,14 @@ const items = useDatabaseStore().items;
 // Takes the toggle-panel event and sends a close-panel event to all children but the one the inital event came from
 const closePanel = new Event('close-panel');
 function closeEventRedirect(event) {
+	// Sets event target to the correct tr element. Needed for keyboard functionality
 	let eventTarget;
 	if (event.target.tagName == 'TD') {
 		eventTarget = event.target.parentElement;
 	} else if (event.target.tagName == 'TR') {
 		eventTarget = event.target;
 	}
-
+	// Sends a close-panel event to all items but the one that was clicked
 	Array.from(document.getElementsByClassName('item')).forEach(item => {
 		if (eventTarget != item) {
 			item.dispatchEvent(closePanel);
@@ -30,19 +31,6 @@ function closeEventRedirect(event) {
 	dbItem = useDatabaseStore().getItemByCode(eventTarget.classList.item(0));
 	
 	useDatabaseStore().selected = dbItem.code;
-
-	// Opens the popup for editing an item
-	document.getElementById('mainTable').addEventListener('edit-clicked', openEditPopup, { capture: true });
-}
-
-
-const popup = ref(false);
-function openEditPopup(event) {
-	popup.value = true;
-}
-function closeEditPopup(event) {
-	console.log('closePopup');
-	popup.value = false;
 }
 </script>
 
@@ -58,9 +46,6 @@ function closeEditPopup(event) {
 				<TableItem v-for="info in items" :info="info" />
 			</tbody>
 		</table>
-		<Teleport to="html">
-			<EditPopup v-if="popup" @close-edit-panel="closeEditPopup"/>
-		</Teleport>
 	</div>
 
 </template>

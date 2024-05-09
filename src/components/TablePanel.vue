@@ -1,9 +1,10 @@
 <script setup>
 const props = defineProps(['info']);
 
+// When the edit button gets clicked, send an event up the DOM
 const editButtonEvent = new Event('edit-clicked', { bubbles: true });
-
 function editClick(event) {
+	// Ensures it doensn't matter if the image or div is what was clicked
 	let tdTarget = event.target;
 	if (tdTarget.className != 'edit') {
 		tdTarget = tdTarget.parentElement;
@@ -66,7 +67,7 @@ table {
 	background-color: var(--accent-green);
 }
 .edit.selected:active {
-	background-color: var(--panel-color);
+	background-color: var(--item-active);
 }
 
 /* Adds horizontal dividers */
