@@ -20,8 +20,21 @@ function editClick(event) {
 // Sync any potential changes to useDatabaseStore along with 'changed' set to true
 function syncToStore() {
 	let panel = document.querySelector('.editable');
+	console.debug('before');
+	console.debug(info.value);
 	info.value.changed = true;
-	info.value.given_name = panel.querySelector('.name').innerHTML;
+	info.value.given_name = panel.querySelector('.name').value;
+	info.value.number = panel.querySelector('.number').value;
+	info.value.favorite = favorite;
+	// info.value.allergens = panel.querySelector('.allergens').value;
+	// info.value.tags = panel.querySelector('.tags').value;
+	console.debug('after');
+	console.debug(info.value);
+}
+
+let favorite = info.value.favorite;
+function checkboxClick(event) {
+	favorite = !favorite;
 }
 </script>
 
@@ -36,9 +49,9 @@ function syncToStore() {
 						<th>Favorite</th>
 					</thead>
 					<tbody class="panelBody">
-						<td class="name" contenteditable="true">{{ info.given_name }}</td>
-						<td class="number">{{ info.number }}</td>
-						<td class="favorite">{{ info.favorite }}</td>
+						<td><input type="text" class="name" v-bind:value="info.given_name"/></td>
+						<td><input type="number" class="number" v-bind:value="info.number"/></td>
+						<td><input type="checkbox" class="favorite" v-bind:checked="info.favorite" @change="checkboxClick"/></td>
 					</tbody>
 				</table>
 				<table>
@@ -67,6 +80,10 @@ function syncToStore() {
 table {
 	width: 100%;
 	border-collapse: collapse;
+}
+
+input {
+	display: table-cell;
 }
 
 .panel {

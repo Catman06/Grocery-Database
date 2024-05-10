@@ -1,14 +1,8 @@
 <script setup>
 import TablePanel from '../components/TablePanel.vue';
 import EditPanel from './EditPanel.vue';
-import { ref } from "vue";
+import { ref, watch } from "vue";
 const props = defineProps(['info']);
-
-// Sets favTxt to * if the item is a favorite
-let favTxt = "";
-if (props.info.favorite == true) {
-	favTxt = "*";
-}
 
 const panel = ref(false);
 
@@ -49,7 +43,7 @@ function closeEditPanel(event) {
 		@keydown="togglePanel" @close-panel="closePanel">
 		<td class="name">{{ info.given_name }}</td>
 		<td>{{ info.number }}</td>
-		<td class="favorite">{{ favTxt }}</td>
+		<td class="favorite">{{ info.favorite ? '*' : ''}}</td>
 	</tr>
 	<slot></slot>
 	<TablePanel v-if="panel" rowspan="3" :info="info" @edit-clicked="openEditPanel"/>
