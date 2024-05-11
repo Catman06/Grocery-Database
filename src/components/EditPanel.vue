@@ -1,6 +1,6 @@
 <script setup>
+import ListEditor from './ListEditor.vue';
 import { useDatabaseStore } from '@/stores/database';
-import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 const selected = ref(useDatabaseStore().selected);
 let info = ref(useDatabaseStore().getItemByCode(selected.value));
@@ -36,6 +36,12 @@ let favorite = info.value.favorite;
 function checkboxClick(event) {
 	favorite = !favorite;
 }
+
+const allergensEdit = ref(false);
+function toggleAllergenEdit(event) {
+	console.log(event);
+}
+const tagsEdit = ref(false);
 </script>
 
 <template>
@@ -60,13 +66,19 @@ function checkboxClick(event) {
 						<th>OFF Name</th>
 						<th>Allergens</th>
 						<th>Tags</th>
-						<th>Edit</th>
+						<th>Save</th>
 					</thead>
 					<tbody class="panelBody">
 						<td class="barcode">{{ info.code }}</td>
 						<td class="off_name">{{ info.off_name }}</td>
-						<td class="allergens">{{ info.allergens.toString() }}</td>
-						<td class="tags">{{ info.tags.toString() }}</td>
+						<td class="allergens" @click="toggleAllergenEdit" v-if="allergensEdit">
+							<ListEditor v-bind:type="'allergens'"/>
+						</td>
+						<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ info.allergens.toString() }}</td>
+						<td class="tags" @click="toggleTagsEdit" v-if="tagsEdit">
+							<ListEditor v-bind:type="'tags'"/>
+						</td>
+						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ info.tags.toString() }}</td>
 						<td class="edit" @click="editClick"><img src="/favicon.ico"></td>
 					</tbody>
 				</table>
@@ -82,6 +94,10 @@ table {
 	border-collapse: collapse;
 }
 
+td {
+	height: 2rem;
+}
+
 input {
 	display: table-cell;
 }
@@ -95,23 +111,35 @@ input {
 	background-color: var(--panel-header-color);
 }
 
+.barcode {
+	background-color: var(--accent-dark-grey);
+}
+
+.off_name {
+	background-color: var(--accent-dark-grey);
+}
+
 .allergens {
 	max-width: 35%;
+	cursor:pointer;
 }
 
 .tags {
 	max-width: 35%;
+	cursor:pointer;
 }
 
 .edit {
 	background-color: var(--item-active);
+	cursor:pointer;
 }
 
 .allergens:hover,
 .tags:hover,
 .name:hover,
 .number:hover,
-.favorite:hover {
+.favorite:hover,
+.edit:hover {
 	background-color: var(--item-hover);
 }
 
@@ -119,7 +147,8 @@ input {
 .tags:active,
 .name:active,
 .number:active,
-.favorite:active {
+.favorite:active,
+.edit:active {
 	background-color: var(--item-active);
 }
 

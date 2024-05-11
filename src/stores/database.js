@@ -15,7 +15,13 @@ export const useDatabaseStore = defineStore('database', () => {
 		const item = items.value.find((item) => item.code == code);
 		return item;
 	}
+	//TODO Returns a list of all tags or allergens depending on the option passed
+	function tagList(type) {
+		let tags = [];
 
-	return { items, selected, getItemByCode };
+		return tags;
+	}
+
+	return { items, selected, getItemByCode, tagList };
 
 })

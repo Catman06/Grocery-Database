@@ -62,6 +62,7 @@ table {
 
 .edit:hover {
 	background-color: var(--item-hover);
+	cursor:pointer;
 }
 .edit:active {
 	background-color: var(--accent-green);

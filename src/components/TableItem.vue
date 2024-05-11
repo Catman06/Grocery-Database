@@ -1,5 +1,5 @@
 <script setup>
-import TablePanel from '../components/TablePanel.vue';
+import TablePanel from './TablePanel.vue';
 import EditPanel from './EditPanel.vue';
 import { ref, watch } from "vue";
 const props = defineProps(['info']);
