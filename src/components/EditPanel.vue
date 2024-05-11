@@ -26,11 +26,14 @@ function syncToStore() {
 	info.value.given_name = panel.querySelector('.name').value;
 	info.value.number = panel.querySelector('.number').value;
 	info.value.favorite = favorite;
-	// info.value.allergens = panel.querySelector('.allergens').value;
-	// info.value.tags = panel.querySelector('.tags').value;
+	info.value.allergens = allergens.value;
+	info.value.tags = tags.value;
 	console.debug('after');
 	console.debug(info.value);
 }
+// Creates a local deep copy for holding temporary changes to the arrays
+const tags = ref(JSON.parse(JSON.stringify(info.value.tags)));
+const allergens = ref(JSON.parse(JSON.stringify(info.value.allergens)));
 
 let favorite = info.value.favorite;
 function checkboxClick(event) {
@@ -39,9 +42,12 @@ function checkboxClick(event) {
 
 const allergensEdit = ref(false);
 function toggleAllergenEdit(event) {
-	console.log(event);
+	allergensEdit.value = false;
 }
 const tagsEdit = ref(false);
+function toggleTagEdit(event) {
+	tagsEdit.value = false;
+}
 </script>
 
 <template>
@@ -55,9 +61,9 @@ const tagsEdit = ref(false);
 						<th>Favorite</th>
 					</thead>
 					<tbody class="panelBody">
-						<td><input type="text" class="name" v-bind:value="info.given_name"/></td>
-						<td><input type="number" class="number" v-bind:value="info.number"/></td>
-						<td><input type="checkbox" class="favorite" v-bind:checked="info.favorite" @change="checkboxClick"/></td>
+						<td><input type="text" class="name" v-bind:value="info.given_name" /></td>
+						<td><input type="number" class="number" v-bind:value="info.number" /></td>
+						<td><input type="checkbox" class="favorite" v-bind:checked="info.favorite" @change="checkboxClick" /></td>
 					</tbody>
 				</table>
 				<table>
@@ -71,18 +77,17 @@ const tagsEdit = ref(false);
 					<tbody class="panelBody">
 						<td class="barcode">{{ info.code }}</td>
 						<td class="off_name">{{ info.off_name }}</td>
-						<td class="allergens" @click="toggleAllergenEdit" v-if="allergensEdit">
-							<ListEditor v-bind:type="'allergens'"/>
+						<td class="allergens" v-if="allergensEdit">
+							<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="toggleAllergenEdit" />
 						</td>
-						<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ info.allergens.toString() }}</td>
-						<td class="tags" @click="toggleTagsEdit" v-if="tagsEdit">
-							<ListEditor v-bind:type="'tags'"/>
+						<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ allergens.toString() }}</td>
+						<td class="tags" v-if="tagsEdit">
+							<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="toggleTagEdit" />
 						</td>
-						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ info.tags.toString() }}</td>
+						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ tags.toString() }}</td>
 						<td class="edit" @click="editClick"><img src="/favicon.ico"></td>
 					</tbody>
 				</table>
-
 			</table>
 		</td>
 	</div>
@@ -121,17 +126,17 @@ input {
 
 .allergens {
 	max-width: 35%;
-	cursor:pointer;
+	cursor: pointer;
 }
 
 .tags {
 	max-width: 35%;
-	cursor:pointer;
+	cursor: pointer;
 }
 
 .edit {
 	background-color: var(--item-active);
-	cursor:pointer;
+	cursor: pointer;
 }
 
 .allergens:hover,

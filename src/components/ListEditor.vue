@@ -1,31 +1,49 @@
 <script setup>
 import { useDatabaseStore } from '@/stores/database';
 import { ref } from 'vue';
-const props = defineProps(['type']);
+const props = defineProps(['type', 'list']);
 const fullTagList = ref(useDatabaseStore().tagList(props.type))
-const selected = ref(useDatabaseStore().selected);
-// Get the list of tags or allergens
-const tags = ref();
-if (props.type == 'allergens') {
-	tags.value = useDatabaseStore().getItemByCode(selected.value).allergens;
-} else {
-	tags.value = useDatabaseStore().getItemByCode(selected.value).tags;
+
+function remove(tag) {
+	const i = props.list.indexOf(tag);
+	try {
+		props.list.splice(i, 1);
+	} catch (error) {
+		console.error(error);
+	}
+}
+console.log(props.list);
+function add() {
+	try {
+		let newTag = document.getElementById(`new${props.type}`).value;
+		props.list.push(newTag);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
+
+
+const emit = defineEmits(['close-button']);
+function close(event) {
+	emit('close-button');
+
+}
 </script>
 
 <template>
 	<td class="dropdown">
 		<div class="addTag">
-			<button>+</button>
-			<input type="text" placeholder="New Tag">
+			<button @click="add">+</button>
+			<input v-bind:id="'new'+type" type="text" placeholder="New Tag">
+			<button @click="close">Close</button>
 		</div>
-		<div class="dropdownContent" v-for="tag in tags">
-			<input v-bind:name='tag' type="checkbox" checked="true">
-			<label v-bind:for='tag'>{{ tag }}</label>
-		</div>
+		<li class="dropdownContent" v-for="tag in list">
+			{{ tag }}
+			<button @click="remove(tag)">X</button>
+		</li>
 		<datalist id="datalist">
-			<option v-for="tag in fullTagList" v-bind:value='tag'/>
+			<option v-for="tag in fullTagList" v-bind:value='tag' />
 		</datalist>
 	</td>
 
@@ -40,11 +58,17 @@ if (props.type == 'allergens') {
 
 }
 
+.addTag {
+	z-index: 1;
+}
+
 .dropdownContent {
 	z-index: 1;
 	background-color: inherit;
+	list-style: none;
 }
 
 .dropdownContent:last-of-type {
-	border-radius: 0px 0px 10px 10px;}
+	border-radius: 0px 0px 10px 10px;
+}
 </style>
