@@ -2,7 +2,8 @@
 import { useDatabaseStore } from '@/stores/database';
 import { ref } from 'vue';
 const props = defineProps(['type', 'list']);
-const fullTagList = ref(useDatabaseStore().tagList(props.type))
+const fullTagList = ref(useDatabaseStore().tagList(props.type));
+console.log(fullTagList.value);
 
 function remove(tag) {
 	const i = props.list.indexOf(tag);
@@ -12,7 +13,7 @@ function remove(tag) {
 		console.error(error);
 	}
 }
-console.log(props.list);
+
 function add() {
 	try {
 		let newTag = document.getElementById(`new${props.type}`).value;
@@ -35,14 +36,14 @@ function close(event) {
 	<td class="dropdown">
 		<div class="addTag">
 			<button @click="add">+</button>
-			<input v-bind:id="'new'+type" type="text" placeholder="New Tag">
+			<input v-bind:id="'new'+type" type="text" placeholder="New Tag" v-bind:list="type+'datalist'">
 			<button @click="close">Close</button>
 		</div>
 		<li class="dropdownContent" v-for="tag in list">
 			{{ tag }}
 			<button @click="remove(tag)">X</button>
 		</li>
-		<datalist id="datalist">
+		<datalist v-bind:id="type+'datalist'">
 			<option v-for="tag in fullTagList" v-bind:value='tag' />
 		</datalist>
 	</td>

@@ -18,7 +18,27 @@ export const useDatabaseStore = defineStore('database', () => {
 	//TODO Returns a list of all tags or allergens depending on the option passed
 	function tagList(type) {
 		let tags = [];
-
+		if (type == 'allergens') {
+			// For each item
+			this.items.forEach(item => {
+				// For each allergen
+				item.allergens.forEach(tag => {
+					if (!tags.includes(tag)) {
+						tags.push(tag);
+					}
+				});
+			});
+		} else if (type == 'tags') {
+			// For each item
+			this.items.forEach(item => {
+				// For each allergen
+				item.tags.forEach(tag => {
+					if (!tags.includes(tag)) {
+						tags.push(tag);
+					}
+				});
+			});
+		}
 		return tags;
 	}
 
