@@ -19,17 +19,17 @@ function editClick(event) {
 
 // Sync any potential changes to useDatabaseStore along with 'changed' set to true
 function syncToStore() {
-	let panel = document.querySelector('.editable');
-	console.debug('before');
-	console.debug(info.value);
-	info.value.changed = true;
-	info.value.given_name = panel.querySelector('.name').value;
-	info.value.number = panel.querySelector('.number').value;
-	info.value.favorite = favorite;
-	info.value.allergens = allergens.value;
-	info.value.tags = tags.value;
-	console.debug('after');
-	console.debug(info.value);
+	try {
+		let panel = document.querySelector('.editable');
+		info.value.changed = true;
+		info.value.given_name = panel.querySelector('.name').value;
+		info.value.number = panel.querySelector('.number').value;
+		info.value.favorite = favorite;
+		info.value.allergens = allergens.value;
+		info.value.tags = tags.value;
+	} catch (error) {
+		console.error(`Failed to sync to the store: ${error}`);
+	}
 }
 // Creates a local deep copy for holding temporary changes to the arrays
 const tags = ref(JSON.parse(JSON.stringify(info.value.tags)));
@@ -77,15 +77,15 @@ function toggleTagEdit(event) {
 					<tbody class="panelBody">
 						<td class="barcode">{{ info.code }}</td>
 						<td class="off_name">{{ info.off_name }}</td>
-						<td class="allergens" v-if="allergensEdit">
+						<td class="allergens expanded" v-if="allergensEdit">
 							<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="toggleAllergenEdit" />
 						</td>
 						<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ allergens.toString() }}</td>
-						<td class="tags" v-if="tagsEdit">
+						<td class="tags expanded" v-if="tagsEdit">
 							<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="toggleTagEdit" />
 						</td>
 						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ tags.toString() }}</td>
-						<td class="edit" @click="editClick"><img src="/favicon.ico"></td>
+						<td class="edit bi-pencil-square" @click="editClick"><img src="/favicon.ico"></td>
 					</tbody>
 				</table>
 			</table>
@@ -110,33 +110,37 @@ input {
 .panel {
 	display: table-row;
 	background-color: var(--panel-color);
+	transition: all .2s;
 }
 
 .panelHeader {
 	background-color: var(--panel-header-color);
+	transition: all .2s;
 }
 
-.barcode {
-	background-color: var(--accent-dark-grey);
-}
-
+.barcode,
 .off_name {
 	background-color: var(--accent-dark-grey);
+	transition: all .2s;
 }
 
-.allergens {
-	max-width: 35%;
-	cursor: pointer;
-}
-
+.allergens,
 .tags {
 	max-width: 35%;
 	cursor: pointer;
+	transition: all .2s;
+}
+
+.expanded {
+	vertical-align: top;
 }
 
 .edit {
+	color: white;
 	background-color: var(--item-active);
+	font-size: 2rem;
 	cursor: pointer;
+	transition: all .2s;
 }
 
 .allergens:hover,

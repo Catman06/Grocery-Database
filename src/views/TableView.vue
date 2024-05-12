@@ -1,6 +1,5 @@
 <script setup>
 import TableItem from '../components/TableItem.vue'
-import EditPopup from '@/components/EditPopup.vue';
 import { useDatabaseStore } from '@/stores/database';
 import { ref } from 'vue';
 
@@ -16,13 +15,19 @@ function closeEventRedirect(event) {
 	} else if (event.target.tagName == 'TR') {
 		eventTarget = event.target;
 	}
+	
 	// Sends a close-panel event to all items but the one that was clicked
 	Array.from(document.getElementsByClassName('item')).forEach(item => {
 		if (eventTarget != item) {
 			item.dispatchEvent(closePanel);
 			item.setAttribute('aria-expanded', false);
 		} else {
-			item.setAttribute("aria-expanded", true);
+			// If the clicked item is the expanded one, un-expand it
+			if (item.getAttribute('aria-expanded') == 'true') {
+				item.setAttribute('aria-expanded', false);	
+			} else {
+				item.setAttribute('aria-expanded', true);				
+			}
 		}
 	});
 	
@@ -73,6 +78,7 @@ thead {
 /* TableItems are classed 'item' */
 .item {
 	background-color: var(--accent-grey);
+	transition: all .2s;
 }
 
 .item:nth-of-type(even) {

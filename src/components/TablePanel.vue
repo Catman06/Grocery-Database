@@ -29,7 +29,7 @@ function editClick(event) {
 					<td class="off_name">{{ info.off_name }}</td>
 					<td class="allergens">{{ info.allergens.toString() }}</td>
 					<td class="tags">{{ info.tags.toString() }}</td>
-					<td class="edit" @click="editClick"><img src="/favicon.ico"></td>
+					<td class="edit bi-pencil-square" @click="editClick"></td>
 				</tbody>
 			</table>
 		</td>
@@ -58,6 +58,11 @@ table {
 
 .tags {
 	max-width: 35%;
+}
+
+.edit {
+	font-size: 2rem;
+	transition: all .2s;
 }
 
 .edit:hover {
