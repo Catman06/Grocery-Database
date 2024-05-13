@@ -47,7 +47,7 @@ function closeEditPanel(event) {
 	</tr>
 	<slot></slot>
 	<TablePanel v-if="panel" rowspan="3" :info="info" @edit-clicked="openEditPanel"/>
-	<EditPanel v-if="edit" @edit-clicked="closeEditPanel" />
+	<EditPanel v-if="edit" @edit-clicked="closeEditPanel" @deleted="closePanel"/>
 </template>
 
 <style scoped>

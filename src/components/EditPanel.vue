@@ -22,6 +22,7 @@ function syncToStore() {
 	try {
 		let panel = document.querySelector('.editable');
 		info.value.changed = true;
+		info.value.deleted = deleted;
 		info.value.given_name = panel.querySelector('.name').value;
 		info.value.number = panel.querySelector('.number').value;
 		info.value.favorite = favorite;
@@ -48,6 +49,25 @@ const tagsEdit = ref(false);
 function toggleTagEdit(event) {
 	tagsEdit.value = false;
 }
+
+let modal;
+function deleteModal() {
+	modal = document.getElementById("deleteModal");
+	console.log("DeleteConfirm");
+	modal.showModal();
+}
+function closeModal() {
+	modal.close();
+}
+let deleted = false;
+const deletedEvent = new Event('deleted', { bubbles: true });
+function deleteConfirmed(event) {
+	modal.close();
+	deleted = true;
+	event.target.dispatchEvent(deletedEvent);
+	document.getElementsByClassName(`${info.value.code} item`)[0].setAttribute('style', 'display: none');
+	syncToStore();
+}
 </script>
 
 <template>
@@ -59,11 +79,18 @@ function toggleTagEdit(event) {
 						<th>Name</th>
 						<th>Number</th>
 						<th>Favorite</th>
+						<th>Delete</th>
 					</thead>
 					<tbody class="panelBody">
 						<td><input type="text" class="name" v-bind:value="info.given_name" /></td>
 						<td><input type="number" class="number" v-bind:value="info.number" /></td>
 						<td><input type="checkbox" class="favorite" v-bind:checked="info.favorite" @change="checkboxClick" /></td>
+						<td class="delete bi-trash-fill" @click="deleteModal"></td>
+						<dialog id="deleteModal">
+							<h3>Really Delete?</h3>
+							<button @click="deleteConfirmed">Yes</button>
+							<button @click="closeModal">No</button>
+						</dialog>
 					</tbody>
 				</table>
 				<table>
@@ -85,7 +112,7 @@ function toggleTagEdit(event) {
 							<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="toggleTagEdit" />
 						</td>
 						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ tags.toString() }}</td>
-						<td class="edit bi-pencil-square" @click="editClick"><img src="/favicon.ico"></td>
+						<td class="edit bi-pencil-square" @click="editClick"></td>
 					</tbody>
 				</table>
 			</table>
@@ -125,10 +152,16 @@ input {
 }
 
 .allergens,
-.tags {
+.tags,
+.delete {
 	max-width: 35%;
 	cursor: pointer;
 	transition: all .2s;
+}
+
+.delete {
+	font-size: 2rem;
+	color: white;
 }
 
 .expanded {
@@ -148,7 +181,8 @@ input {
 .name:hover,
 .number:hover,
 .favorite:hover,
-.edit:hover {
+.edit:hover,
+.delete:hover {
 	background-color: var(--item-hover);
 }
 
@@ -157,8 +191,17 @@ input {
 .name:active,
 .number:active,
 .favorite:active,
-.edit:active {
+.edit:active,
+.delete:active {
 	background-color: var(--item-active);
+}
+
+#deleteModal {
+	background-color: var(--panel-color);
+}
+
+#deleteModal>button {
+	margin: .8rem;
 }
 
 /* Adds horizontal dividers */
