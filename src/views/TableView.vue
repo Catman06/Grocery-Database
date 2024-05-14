@@ -37,10 +37,17 @@ function closeEventRedirect(event) {
 	
 	useDatabaseStore().selected = dbItem.code;
 }
+
+import { loadTable } from '@/database_interaction/dbAccess';
+function testPHP() {
+	console.log('running loadTable');
+	loadTable();
+}
 </script>
 
 <template>
 	<div>
+		<button @click="testPHP">Test PHP</button>
 		<table id="mainTable" class="table">
 			<thead>
 				<th>Name</th>

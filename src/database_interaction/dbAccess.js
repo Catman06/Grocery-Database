@@ -1,8 +1,17 @@
 export async function loadTable() {
+	console.log('Loading Table');
 	const headers = [
-		['goal', 'get_table']
+		['Goal', 'get-table']
 	];
-	let response = await fetch("/src/php/dbAccess.php", {
-		headers
+	let response = await fetch("dbAccess.php", {
+		headers: headers
 	});
+	response = await response.json()
+
+	if (response.error) {
+		console.error('PHP Error:' + response.error);
+		return;
+	}
+	console.log(response);
+	return response;
 }

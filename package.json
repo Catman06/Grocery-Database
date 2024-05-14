@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --base=/src/grocery_database/",
+    "deploy": "vite build --base=/groceryDB/ && cp -r ~/Development/Grocery-Database/dist/* /srv/http/nginx/groceryDB/",
     "preview": "vite preview"
   },
   "dependencies": {

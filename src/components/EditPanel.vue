@@ -8,7 +8,7 @@ let info = ref(useDatabaseStore().getItemByCode(selected.value));
 // When edit is clicked, sync any changes to the store then sen the edit-clicked event
 const editButtonEvent = new Event('edit-clicked', { bubbles: true });
 function editClick(event) {
-	// Ensures it doensn't matter if the image or div is what was clicked
+	// Ensures it doesn't matter if the image or div is what was clicked
 	let tdTarget = event.target;
 	if (tdTarget.className != 'edit') {
 		tdTarget = tdTarget.parentElement;
@@ -17,7 +17,7 @@ function editClick(event) {
 	tdTarget.dispatchEvent(editButtonEvent);
 }
 
-// Sync any potential changes to useDatabaseStore along with 'changed' set to true
+// Sync any potential changes to useDatabaseStore along with 'deleted' set to signal a change has potentially been made
 function syncToStore() {
 	try {
 		let panel = document.querySelector('.editable');
