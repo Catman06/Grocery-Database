@@ -1,10 +1,12 @@
 <script setup>
 import TablePanel from './TablePanel.vue';
 import EditPanel from './EditPanel.vue';
-import { ref, watch } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
+import { useDatabaseStore } from '@/stores/database';
 const props = defineProps(['info']);
 
 const panel = ref(false);
+
 
 // Toggles the panel, emitting an event to close all others
 // if the panel is in edit mode, exit edit mode
@@ -39,7 +41,7 @@ function closeEditPanel(event) {
 </script>
 
 <template>
-	<tr v-bind:class="info.code" class="item" role="button" aria-expanded="false" tabindex="1" @click="togglePanel"
+	<tr v-bind:class="info.barcode" class="item" role="button" aria-expanded="false" tabindex="1" @click="togglePanel"
 		@keydown="togglePanel" @close-panel="closePanel">
 		<td class="name">{{ info.given_name }}</td>
 		<td>{{ info.number }}</td>

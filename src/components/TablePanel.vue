@@ -14,7 +14,7 @@ function editClick(event) {
 </script>
 
 <template>
-	<div class="panel" v-bind:class="info.code">
+	<div class="panel" v-bind:class="info.barcode">
 		<td colspan="3">
 			<table>
 				<thead class="panelHeader">
@@ -25,7 +25,7 @@ function editClick(event) {
 					<th>Edit</th>
 				</thead>
 				<tbody class="panelBody">
-					<td class="barcode">{{ info.code }}</td>
+					<td class="barcode">{{ info.barcode }}</td>
 					<td class="off_name">{{ info.off_name }}</td>
 					<td class="allergens">{{ info.allergens.toString() }}</td>
 					<td class="tags">{{ info.tags.toString() }}</td>

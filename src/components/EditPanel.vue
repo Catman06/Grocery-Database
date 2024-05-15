@@ -1,5 +1,6 @@
 <script setup>
 import ListEditor from './ListEditor.vue';
+import { updateItem } from '@/database_interaction/dbAccess';
 import { useDatabaseStore } from '@/stores/database';
 import { ref, watch } from 'vue';
 const selected = ref(useDatabaseStore().selected);
@@ -18,16 +19,29 @@ function editClick(event) {
 }
 
 // Sync any potential changes to useDatabaseStore along with 'deleted' set to signal a change has potentially been made
-function syncToStore() {
+async function syncToStore() {
 	try {
 		let panel = document.querySelector('.editable');
-		info.value.changed = true;
-		info.value.deleted = deleted;
-		info.value.given_name = panel.querySelector('.name').value;
-		info.value.number = panel.querySelector('.number').value;
-		info.value.favorite = favorite;
-		info.value.allergens = allergens.value;
-		info.value.tags = tags.value;
+
+		let itemForm = new FormData();
+		itemForm.append("barcode", info.value.barcode);
+		itemForm.append("given_name", panel.querySelector('.name').value);
+		itemForm.append("off_name", info.value.off_name);
+		itemForm.append("number", panel.querySelector('.number').value);
+		itemForm.append("allergens", JSON.stringify(allergens.value));
+		itemForm.append("tags", JSON.stringify(tags.value));
+		itemForm.append("favorite", favorite);
+		itemForm.append("deleted", deleted);
+
+
+		// Update the database
+		await updateItem(itemForm);
+
+		// If the item was deleted un-select it
+		selected.value = undefined;
+
+		// Update the store
+		await useDatabaseStore().update();
 	} catch (error) {
 		console.error(`Failed to sync to the store: ${error}`);
 	}
@@ -65,13 +79,13 @@ function deleteConfirmed(event) {
 	modal.close();
 	deleted = true;
 	event.target.dispatchEvent(deletedEvent);
-	document.getElementsByClassName(`${info.value.code} item`)[0].setAttribute('style', 'display: none');
+	document.getElementsByClassName(`${info.value.barcode} item`)[0].setAttribute('style', 'display: none');
 	syncToStore();
 }
 </script>
 
 <template>
-	<div class="editable panel" v-bind:class="info.code">
+	<div class="editable panel" v-bind:class="info.barcode">
 		<td colspan="3">
 			<table>
 				<table>
@@ -102,7 +116,7 @@ function deleteConfirmed(event) {
 						<th>Save</th>
 					</thead>
 					<tbody class="panelBody">
-						<td class="barcode">{{ info.code }}</td>
+						<td class="barcode">{{ info.barcode }}</td>
 						<td class="off_name">{{ info.off_name }}</td>
 						<td class="allergens expanded" v-if="allergensEdit">
 							<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="toggleAllergenEdit" />

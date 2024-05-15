@@ -26,8 +26,9 @@ export const itemPrototype = {
 			</nav>
 		</div>
 	</header>
-
-	<RouterView />
+	<Suspense>
+		<RouterView />
+	</Suspense>
 </template>
 
 <style scoped>

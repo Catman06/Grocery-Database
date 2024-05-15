@@ -1,11 +1,16 @@
 <script setup>
-import TableItem from '../components/TableItem.vue'
+import { loadTable } from '@/database_interaction/dbAccess';
+import TableItem from '../components/TableItem.vue';
 import { useDatabaseStore } from '@/stores/database';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
-const items = useDatabaseStore().items;
+await useDatabaseStore().update();
+const { items } = storeToRefs(useDatabaseStore());
+console.log("'items' Loaded");
+console.log(items);
 
-// Takes the toggle-panel event and sends a close-panel event to all children but the one the inital event came from
+// Takes the toggle-panel event and sends a close-panel event to all children but the one the initial event came from
 const closePanel = new Event('close-panel');
 function closeEventRedirect(event) {
 	// Sets event target to the correct tr element. Needed for keyboard functionality
@@ -33,15 +38,29 @@ function closeEventRedirect(event) {
 	
 	// Set 'selected' to the clicked item's code for the store
 	let dbItem;
+	console.log(`Changing Selection: ${useDatabaseStore().selected}`);
+	console.log(eventTarget.classList);
 	dbItem = useDatabaseStore().getItemByCode(eventTarget.classList.item(0));
-	
-	useDatabaseStore().selected = dbItem.code;
+	useDatabaseStore().selected = dbItem.barcode;
+	console.log(`Changed Selection to ${useDatabaseStore().selected}`);
 }
 
-import { loadTable } from '@/database_interaction/dbAccess';
-function testPHP() {
-	console.log('running loadTable');
-	loadTable();
+import { updateItem } from '@/database_interaction/dbAccess';
+async function testPHP() {
+	await useDatabaseStore().update();
+	let itemForm = new FormData();
+		itemForm.append("barcode", (useDatabaseStore().items.length + 1));
+		itemForm.append("given_name", 'Name');
+		itemForm.append("off_name", 'Name');
+		itemForm.append("number", 1);
+		itemForm.append("allergens", JSON.stringify([]));
+		itemForm.append("tags", JSON.stringify([]));
+		itemForm.append("favorite", true);
+		itemForm.append("deleted", false);
+
+
+		// Update the database
+		await updateItem(itemForm);
 }
 </script>
 
@@ -55,7 +74,7 @@ function testPHP() {
 				<th>Favorite</th>
 			</thead>
 			<tbody @toggle-panel="closeEventRedirect">
-				<TableItem v-for="info in items" :info="info" />
+					<TableItem v-for="info in items" :key="info.barcode":info="info" />
 			</tbody>
 		</table>
 	</div>
