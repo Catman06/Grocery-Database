@@ -2,8 +2,11 @@
 import ListEditor from './ListEditor.vue';
 import { updateItem } from '@/database_interaction/dbAccess';
 import { useDatabaseStore } from '@/stores/database';
+import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
-const selected = ref(useDatabaseStore().selected);
+const { items, selected } = storeToRefs(useDatabaseStore());
+console.log('editPanel Loaded');
+console.log(selected);
 let info = ref(useDatabaseStore().getItemByCode(selected.value));
 
 // When edit is clicked, sync any changes to the store then sen the edit-clicked event
@@ -47,14 +50,15 @@ async function syncToStore() {
 	}
 }
 // Creates a local deep copy for holding temporary changes to the arrays
-const tags = ref(JSON.parse(JSON.stringify(info.value.tags)));
 const allergens = ref(JSON.parse(JSON.stringify(info.value.allergens)));
+const tags = ref(JSON.parse(JSON.stringify(info.value.tags)));
 
 let favorite = info.value.favorite;
 function checkboxClick(event) {
 	favorite = !favorite;
 }
 
+// Creates values for switching allergens and tags to and from edit mode
 const allergensEdit = ref(false);
 function toggleAllergenEdit(event) {
 	allergensEdit.value = false;
@@ -64,6 +68,7 @@ function toggleTagEdit(event) {
 	tagsEdit.value = false;
 }
 
+// Stuff for the delete function and it's modal
 let modal;
 function deleteModal() {
 	modal = document.getElementById("deleteModal");

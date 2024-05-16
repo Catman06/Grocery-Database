@@ -7,6 +7,13 @@ export async function loadTable() {
 		headers: headers
 	});
 	response = await response.json()
+
+	//Fix decode allergens and tags
+	response.table.forEach(item => {
+		item.allergens = JSON.parse(item.allergens);
+		item.tags = JSON.parse(item.tags);
+	});
+
 	try {
 		response = response.table;
 	} catch (error) {

@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
 await useDatabaseStore().update();
-const { items } = storeToRefs(useDatabaseStore());
+const { items, selected } = storeToRefs(useDatabaseStore());
 console.log("'items' Loaded");
 console.log(items);
 
@@ -20,7 +20,6 @@ function closeEventRedirect(event) {
 	} else if (event.target.tagName == 'TR') {
 		eventTarget = event.target;
 	}
-	
 	// Sends a close-panel event to all items but the one that was clicked
 	Array.from(document.getElementsByClassName('item')).forEach(item => {
 		if (eventTarget != item) {
@@ -38,35 +37,37 @@ function closeEventRedirect(event) {
 	
 	// Set 'selected' to the clicked item's code for the store
 	let dbItem;
-	console.log(`Changing Selection: ${useDatabaseStore().selected}`);
-	console.log(eventTarget.classList);
 	dbItem = useDatabaseStore().getItemByCode(eventTarget.classList.item(0));
-	useDatabaseStore().selected = dbItem.barcode;
-	console.log(`Changed Selection to ${useDatabaseStore().selected}`);
+	selected.value = dbItem.barcode;
 }
 
 import { updateItem } from '@/database_interaction/dbAccess';
 async function testPHP() {
-	await useDatabaseStore().update();
+	let allergens = ["allergen 1", "allergen 2"];
+	let tags = ["tag 1", "tag 2", "tag 3"];
 	let itemForm = new FormData();
-		itemForm.append("barcode", (useDatabaseStore().items.length + 1));
-		itemForm.append("given_name", 'Name');
-		itemForm.append("off_name", 'Name');
-		itemForm.append("number", 1);
-		itemForm.append("allergens", JSON.stringify([]));
-		itemForm.append("tags", JSON.stringify([]));
-		itemForm.append("favorite", true);
-		itemForm.append("deleted", false);
-
-
-		// Update the database
-		await updateItem(itemForm);
+	itemForm.append("barcode", Math.floor(Math.random() * 1000000000000));
+	itemForm.append("given_name", 'Name');
+	itemForm.append("off_name", 'Name');
+	itemForm.append("number", 1);
+	itemForm.append("allergens", JSON.stringify(allergens));
+	itemForm.append("tags", JSON.stringify(tags));
+	itemForm.append("favorite", false);
+	itemForm.append("deleted", false);
+	
+	
+	// Update the database
+	updateItem(itemForm)
+		.then(() => useDatabaseStore().update())
+		.then(() => console.log('Added new item'))
+		.catch((error) => console.error(error));
 }
 </script>
 
 <template>
 	<div>
 		<button @click="testPHP">Test PHP</button>
+		<div>{{ selected }}</div>
 		<table id="mainTable" class="table">
 			<thead>
 				<th>Name</th>
