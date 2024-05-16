@@ -62,6 +62,17 @@ async function testPHP() {
 		.then(() => console.log('Added new item'))
 		.catch((error) => console.error(error));
 }
+
+let current_sort = 'given_name';
+function sortTable(sort) {
+	if (current_sort == sort) {
+		useDatabaseStore().sortTable('reverse');
+	} else {
+		current_sort = sort;
+		useDatabaseStore().sortTable(sort);
+	}
+}
+
 </script>
 
 <template>
@@ -70,9 +81,9 @@ async function testPHP() {
 		<div>{{ selected }}</div>
 		<table id="mainTable" class="table">
 			<thead>
-				<th>Name</th>
-				<th>Number</th>
-				<th>Favorite</th>
+				<th @click="sortTable('given_name')">Name</th>
+				<th @click="sortTable('number')">Number</th>
+				<th @click="sortTable('favorite')">Favorite</th>
 			</thead>
 			<tbody @toggle-panel="closeEventRedirect">
 					<TableItem v-for="info in items" :key="info.barcode":info="info" />
