@@ -14,16 +14,20 @@ function remove(tag) {
 	}
 }
 
-function add() {
+// Add the new tag, as long as it's not already present or empty
+function add(event) {
+	event.preventDefault();
 	try {
-		let newTag = document.getElementById(`new${props.type}`).value;
+		let newTag = document.getElementById(`new${props.type}`).value.trim();
+		if ( props.list.includes(newTag) || newTag == '') {
+			console.error("Bad Tag input");
+			return;
+		}
 		props.list.push(newTag);
 	} catch (error) {
 		console.error(error);
 	}
 }
-
-
 
 const emit = defineEmits(['close-button']);
 function close(event) {
@@ -35,10 +39,10 @@ function close(event) {
 <template>
 	<td class="dropdown">
 		<button id='closeButton' @click="close">Close</button>
-		<div class="addTag">
-			<input v-bind:id="'new'+type" type="text" placeholder="New Tag" v-bind:list="type+'datalist'">
-			<button id='addButton' class="bi-plus" @click="add" />
-		</div>
+		<form class="addTag" @submit="add">
+			<input v-bind:id="'new'+type" type="text" placeholder="New Tag" v-bind:list="type+'datalist'" pattern="[^\s\t\n\r\{\}\\\[\]]([^\t\n\r\{\}\\\[\]]?)+" size="1">
+			<button id='addButton' class="bi-plus" type="submit"/>
+		</form>
 		<li class="dropdownContentWrapper" v-for="tag in list">
 			<div class="dropdownContent">
 				{{ tag }}
@@ -53,6 +57,10 @@ function close(event) {
 </template>
 
 <style scoped>
+td {
+	min-width: 7rem;
+}
+
 .dropdown {
 	position: relative;
 	display: block;
@@ -82,6 +90,13 @@ function close(event) {
 
 #addButton {
 	border-radius: 0px 15% 15% 0px;
+}
+
+input {
+	width: 70%;
+}
+input:invalid {
+	background-color: lightpink;
 }
 
 button {

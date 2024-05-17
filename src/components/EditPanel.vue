@@ -9,9 +9,10 @@ console.log('editPanel Loaded');
 console.log(selected);
 let info = ref(useDatabaseStore().getItemByCode(selected.value));
 
-// When edit is clicked, sync any changes to the store then sen the edit-clicked event
+// When edit is clicked, sync any changes to the store then send the edit-clicked event
 const editButtonEvent = new Event('edit-clicked', { bubbles: true });
 function editClick(event) {
+	event.preventDefault();
 	// Ensures it doesn't matter if the image or div is what was clicked
 	let tdTarget = event.target;
 	if (tdTarget.className != 'edit') {
@@ -24,11 +25,12 @@ function editClick(event) {
 // Sync any potential changes to useDatabaseStore along with 'deleted' set to signal a change has potentially been made
 async function syncToStore() {
 	try {
+		console.log('Syncing');
 		let panel = document.querySelector('.editable');
-
+		let nameVal = panel.querySelector('.name').value == '' ? info.value.given_name : panel.querySelector('.name').value;
 		let itemForm = new FormData();
 		itemForm.append("barcode", info.value.barcode);
-		itemForm.append("given_name", panel.querySelector('.name').value);
+		itemForm.append("given_name", nameVal);
 		itemForm.append("off_name", info.value.off_name);
 		itemForm.append("number", panel.querySelector('.number').value);
 		itemForm.append("allergens", JSON.stringify(allergens.value));
@@ -87,54 +89,64 @@ function deleteConfirmed(event) {
 	document.getElementsByClassName(`${info.value.barcode} item`)[0].setAttribute('style', 'display: none');
 	syncToStore();
 }
+
+// Provides spaces after commas
+function parseTags(tags) {
+	tags = tags.replaceAll(",", ", ");
+	return tags;
+}
 </script>
 
 <template>
 	<div class="editable panel" v-bind:class="info.barcode">
 		<td colspan="3">
-			<table>
+			<form @submit="editClick">
 				<table>
-					<thead class="panelHeader">
-						<th>Name</th>
-						<th>Number</th>
-						<th>Favorite</th>
-						<th>Delete</th>
-					</thead>
-					<tbody class="panelBody">
-						<td><input type="text" class="name" v-bind:value="info.given_name" /></td>
-						<td><input type="number" class="number" v-bind:value="info.number" /></td>
-						<td><input type="checkbox" class="favorite" v-bind:checked="info.favorite" @change="checkboxClick" /></td>
-						<td class="delete bi-trash-fill" @click="deleteModal"></td>
-						<dialog id="deleteModal">
-							<h3>Really Delete?</h3>
-							<button @click="deleteConfirmed">Yes</button>
-							<button @click="closeModal">No</button>
-						</dialog>
-					</tbody>
+					<table>
+						<thead class="panelHeader">
+							<th>Name</th>
+							<th>Number</th>
+							<th>Favorite</th>
+							<th>Delete</th>
+						</thead>
+						<tbody class="panelBody">
+							<td class="namePanel"><input type="text" class="name" v-bind:placeholder="info.given_name" size="1"
+									pattern="[^\s\t\n\r\{\}\\\[\]]([^\t\n\r\{\}\\\[\]]?)+"/></td>
+							<td class="numberPanel"><input type="number" class="number" v-bind:value="info.number" min="0" size="1"></td>
+							<td class="favoritePanel"><input type="checkbox" class="favorite" v-bind:checked="info.favorite" @change="checkboxClick" /></td>
+							<td class="delete bi-trash-fill" @click="deleteModal"></td>
+							<dialog id="deleteModal">
+								<h3>Really Delete?</h3>
+								<button @click="deleteConfirmed">Yes</button>
+								<button @click="closeModal">No</button>
+							</dialog>
+						</tbody>
+					</table>
+					<table>
+						<thead class="panelHeader">
+							<th>Barcode</th>
+							<th>OFF Name</th>
+							<th>Allergens</th>
+							<th>Tags</th>
+							<th>Save</th>
+						</thead>
+						<tbody class="panelBody">
+							<td class="barcode">{{ info.barcode }}</td>
+							<td class="off_name">{{ info.off_name }}</td>
+							<td class="allergens expanded" v-if="allergensEdit">
+								<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="toggleAllergenEdit" />
+							</td>
+							<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ parseTags(allergens.toString()) }}
+							</td>
+							<td class="tags expanded" v-if="tagsEdit">
+								<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="toggleTagEdit" />
+							</td>
+							<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ parseTags(tags.toString()) }}</td>
+							<td><button class="edit bi-pencil-square" type="submit"></button></td>
+						</tbody>
+					</table>
 				</table>
-				<table>
-					<thead class="panelHeader">
-						<th>Barcode</th>
-						<th>OFF Name</th>
-						<th>Allergens</th>
-						<th>Tags</th>
-						<th>Save</th>
-					</thead>
-					<tbody class="panelBody">
-						<td class="barcode">{{ info.barcode }}</td>
-						<td class="off_name">{{ info.off_name }}</td>
-						<td class="allergens expanded" v-if="allergensEdit">
-							<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="toggleAllergenEdit" />
-						</td>
-						<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ allergens.toString() }}</td>
-						<td class="tags expanded" v-if="tagsEdit">
-							<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="toggleTagEdit" />
-						</td>
-						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ tags.toString() }}</td>
-						<td class="edit bi-pencil-square" @click="editClick"></td>
-					</tbody>
-				</table>
-			</table>
+			</form>
 		</td>
 	</div>
 </template>
@@ -150,7 +162,13 @@ td {
 }
 
 input {
-	display: table-cell;
+	background-color: white;
+	width: 80%;
+	padding: .05rem;
+}
+
+input:invalid {
+	background-color: lightpink;
 }
 
 .panel {
@@ -162,6 +180,12 @@ input {
 .panelHeader {
 	background-color: var(--panel-header-color);
 	transition: all .2s;
+}
+
+.numberPanel,
+.favoritePanel,
+.delete {
+	width: 4rem;
 }
 
 .barcode,
@@ -188,18 +212,18 @@ input {
 }
 
 .edit {
+	display:table-cell;
+	width: 100%;
 	color: white;
 	background-color: var(--item-active);
 	font-size: 2rem;
 	cursor: pointer;
 	transition: all .2s;
+	border: none;
 }
 
 .allergens:hover,
 .tags:hover,
-.name:hover,
-.number:hover,
-.favorite:hover,
 .edit:hover,
 .delete:hover {
 	background-color: var(--item-hover);
@@ -207,9 +231,6 @@ input {
 
 .allergens:active,
 .tags:active,
-.name:active,
-.number:active,
-.favorite:active,
 .edit:active,
 .delete:active {
 	background-color: var(--item-active);

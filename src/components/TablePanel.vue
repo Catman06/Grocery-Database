@@ -11,6 +11,12 @@ function editClick(event) {
 	}
 	tdTarget.dispatchEvent(editButtonEvent);
 }
+
+// Provides spaces after commas
+function parseTags(tags) {
+	tags = tags.replaceAll(",", ", ");
+	return tags;
+}
 </script>
 
 <template>
@@ -27,8 +33,8 @@ function editClick(event) {
 				<tbody class="panelBody">
 					<td class="barcode">{{ info.barcode }}</td>
 					<td class="off_name">{{ info.off_name }}</td>
-					<td class="allergens">{{ info.allergens.toString() }}</td>
-					<td class="tags">{{ info.tags.toString() }}</td>
+					<td class="allergens">{{ parseTags(info.allergens.toString()) }}</td>
+					<td class="tags">{{ parseTags(info.tags.toString()) }}</td>
 					<td class="edit bi-pencil-square" @click="editClick"></td>
 				</tbody>
 			</table>
@@ -41,6 +47,10 @@ function editClick(event) {
 table {
 	width: 100%;
 	border-collapse: collapse;
+}
+
+tbody>td {
+	padding: 0.2rem;
 }
 
 .panel {

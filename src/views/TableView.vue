@@ -101,7 +101,7 @@ function sortTable(sort) {
 	--table-border-color: var(--accent-green);
 
 	text-align: center;
-	width: 100%;
+	width: 98%;
 	max-width: 1028px;
 	margin: 2rem auto;
 	border-radius: 10px;
