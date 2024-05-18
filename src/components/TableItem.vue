@@ -31,10 +31,12 @@ function closePanel(event) {
 // Replaces the normal display panel with the one for editing
 const edit = ref(false);
 function openEditPanel(event) {
+	console.log('openEditPanel');
 	panel.value = false;
 	edit.value = true;
 }
 function closeEditPanel(event) {
+	console.log('closeEditPanel');
 	panel.value = true;
 	edit.value = false;
 }
@@ -49,7 +51,7 @@ function closeEditPanel(event) {
 	</tr>
 	<slot></slot>
 	<TablePanel v-if="panel" rowspan="3" :info="info" @edit-clicked="openEditPanel"/>
-	<EditPanel v-if="edit" @edit-clicked="closeEditPanel" @deleted="closePanel"/>
+	<EditPanel v-if="edit" @save-clicked="closeEditPanel" @deleted="closePanel"/>
 </template>
 
 <style scoped>

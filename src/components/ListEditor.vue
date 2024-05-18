@@ -16,7 +16,6 @@ function remove(tag) {
 
 // Add the new tag, as long as it's not already present or empty
 function add(event) {
-	event.preventDefault();
 	try {
 		let newTag = document.getElementById(`new${props.type}`).value.trim();
 		if ( props.list.includes(newTag) || newTag == '') {
@@ -24,6 +23,7 @@ function add(event) {
 			return;
 		}
 		props.list.push(newTag);
+		document.getElementById(`new${props.type}`).value = '';
 	} catch (error) {
 		console.error(error);
 	}
@@ -39,14 +39,14 @@ function close(event) {
 <template>
 	<td class="dropdown">
 		<button id='closeButton' @click="close">Close</button>
-		<form class="addTag" @submit="add">
+		<form class="addTag" @submit.stop.prevent="add">
 			<input v-bind:id="'new'+type" type="text" placeholder="New Tag" v-bind:list="type+'datalist'" pattern="[^\s\t\n\r\{\}\\\[\]]([^\t\n\r\{\}\\\[\]]?)+" size="1">
 			<button id='addButton' class="bi-plus" type="submit"/>
 		</form>
 		<li class="dropdownContentWrapper" v-for="tag in list">
 			<div class="dropdownContent">
 				{{ tag }}
-				<button class="bi-trash" @click="remove(tag)" />				
+				<button class="bi-trash" @click.stop="remove(tag)" />				
 			</div>
 		</li>
 		<datalist v-bind:id="type+'datalist'">

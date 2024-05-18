@@ -4,22 +4,18 @@ import { updateItem } from '@/database_interaction/dbAccess';
 import { useDatabaseStore } from '@/stores/database';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
-const { items, selected } = storeToRefs(useDatabaseStore());
+
+const selected = ref(useDatabaseStore().selected);
 console.log('editPanel Loaded');
-console.log(selected);
-let info = ref(useDatabaseStore().getItemByCode(selected.value));
+console.log('selected: ' + selected.value);
+const info = ref(useDatabaseStore().getItemByCode(selected.value));
 
 // When edit is clicked, sync any changes to the store then send the edit-clicked event
-const editButtonEvent = new Event('edit-clicked', { bubbles: true });
-function editClick(event) {
-	event.preventDefault();
-	// Ensures it doesn't matter if the image or div is what was clicked
+const saveButtonEvent = new Event('save-clicked', { bubbles: true });
+function saveClick(event) {
 	let tdTarget = event.target;
-	if (tdTarget.className != 'edit') {
-		tdTarget = tdTarget.parentElement;
-	}
 	syncToStore();
-	tdTarget.dispatchEvent(editButtonEvent);
+	tdTarget.dispatchEvent(saveButtonEvent);
 }
 
 // Sync any potential changes to useDatabaseStore along with 'deleted' set to signal a change has potentially been made
@@ -52,6 +48,7 @@ async function syncToStore() {
 	}
 }
 // Creates a local deep copy for holding temporary changes to the arrays
+console.log(info);
 const allergens = ref(JSON.parse(JSON.stringify(info.value.allergens)));
 const tags = ref(JSON.parse(JSON.stringify(info.value.tags)));
 
@@ -100,53 +97,53 @@ function parseTags(tags) {
 <template>
 	<div class="editable panel" v-bind:class="info.barcode">
 		<td colspan="3">
-			<form @submit="editClick">
+			<table>
 				<table>
-					<table>
-						<thead class="panelHeader">
-							<th>Name</th>
-							<th>Number</th>
-							<th>Favorite</th>
-							<th>Delete</th>
-						</thead>
-						<tbody class="panelBody">
-							<td class="namePanel"><input type="text" class="name" v-bind:placeholder="info.given_name" size="1"
-									pattern="[^\s\t\n\r\{\}\\\[\]]([^\t\n\r\{\}\\\[\]]?)+"/></td>
-							<td class="numberPanel"><input type="number" class="number" v-bind:value="info.number" min="0" size="1"></td>
-							<td class="favoritePanel"><input type="checkbox" class="favorite" v-bind:checked="info.favorite" @change="checkboxClick" /></td>
-							<td class="delete bi-trash-fill" @click="deleteModal"></td>
-							<dialog id="deleteModal">
-								<h3>Really Delete?</h3>
-								<button @click="deleteConfirmed">Yes</button>
-								<button @click="closeModal">No</button>
-							</dialog>
-						</tbody>
-					</table>
-					<table>
-						<thead class="panelHeader">
-							<th>Barcode</th>
-							<th>OFF Name</th>
-							<th>Allergens</th>
-							<th>Tags</th>
-							<th>Save</th>
-						</thead>
-						<tbody class="panelBody">
-							<td class="barcode">{{ info.barcode }}</td>
-							<td class="off_name">{{ info.off_name }}</td>
-							<td class="allergens expanded" v-if="allergensEdit">
-								<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="toggleAllergenEdit" />
-							</td>
-							<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ parseTags(allergens.toString()) }}
-							</td>
-							<td class="tags expanded" v-if="tagsEdit">
-								<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="toggleTagEdit" />
-							</td>
-							<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ parseTags(tags.toString()) }}</td>
-							<td><button class="edit bi-pencil-square" type="submit"></button></td>
-						</tbody>
-					</table>
+					<thead class="panelHeader">
+						<th>Name</th>
+						<th>Number</th>
+						<th>Favorite</th>
+						<th>Delete</th>
+					</thead>
+					<tbody class="panelBody">
+						<td class="namePanel"><input type="text" class="name" v-bind:placeholder="info.given_name" size="1"
+								pattern="[^\s\t\n\r\{\}\\\[\]]([^\t\n\r\{\}\\\[\]]?)+" /></td>
+						<td class="numberPanel"><input type="number" class="number" v-bind:value="info.number" min="0" size="1">
+						</td>
+						<td class="favoritePanel"><input type="checkbox" class="favorite" v-bind:checked="info.favorite"
+								@change="checkboxClick" /></td>
+						<td class="delete bi-trash-fill" @click="deleteModal"></td>
+						<dialog id="deleteModal">
+							<h3>Really Delete?</h3>
+							<button @click="deleteConfirmed">Yes</button>
+							<button @click="closeModal">No</button>
+						</dialog>
+					</tbody>
 				</table>
-			</form>
+				<table>
+					<thead class="panelHeader">
+						<th>Barcode</th>
+						<th>OFF Name</th>
+						<th>Allergens</th>
+						<th>Tags</th>
+						<th>Save</th>
+					</thead>
+					<tbody class="panelBody">
+						<td class="barcode">{{ info.barcode }}</td>
+						<td class="off_name">{{ info.off_name }}</td>
+						<td class="allergens expanded" v-if="allergensEdit">
+							<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="toggleAllergenEdit" />
+						</td>
+						<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ parseTags(allergens.toString()) }}
+						</td>
+						<td class="tags expanded" v-if="tagsEdit">
+							<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="toggleTagEdit" />
+						</td>
+						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ parseTags(tags.toString()) }}</td>
+						<td><button class="edit bi-pencil-square" @click.prevent="saveClick"></button></td>
+					</tbody>
+				</table>
+			</table>
 		</td>
 	</div>
 </template>
@@ -212,7 +209,7 @@ input:invalid {
 }
 
 .edit {
-	display:table-cell;
+	display: table-cell;
 	width: 100%;
 	color: white;
 	background-color: var(--item-active);
