@@ -17,7 +17,7 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
-/target
+src/rust/target
 
 # Editor directories and files
 .vscode/*
