@@ -3,16 +3,6 @@
 version = 3
 
 [[package]]
-name = "Rust_Functions"
-version = "0.1.0"
-dependencies = [
- "image",
- "rxing",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
 name = "ab_glyph_rasterizer"
 version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -898,6 +888,16 @@ name = "regex-syntax"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
+
+[[package]]
+name = "rust_functions"
+version = "0.1.0"
+dependencies = [
+ "image",
+ "rxing",
+ "wasm-bindgen",
+ "web-sys",
+]
 
 [[package]]
 name = "rusttype"

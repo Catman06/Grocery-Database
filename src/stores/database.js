@@ -11,8 +11,13 @@ export const useDatabaseStore = defineStore('database', () => {
 	//// Actions
 	// Returns the item with the passed barcode.
 	function getItemByCode(barcode) {
-		const item = items.value.find((item) => item.barcode == barcode);
-		return item;
+		let item;
+		try {
+			item = items.value.find((item) => item.barcode == barcode);
+			return item;
+		} catch (error) {
+			return undefined;
+		}
 	}
 
 	//Returns a list of all tags or allergens depending on the option passed

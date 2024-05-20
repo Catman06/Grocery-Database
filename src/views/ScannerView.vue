@@ -1,16 +1,16 @@
 <script setup>
-import { onBeforeUnmount } from 'vue';
+import { useDatabaseStore } from '@/stores/database';
+import { onBeforeUnmount, ref, watch } from 'vue';
 
-
-
-// Sets up getting video from the user
+//// Sets up getting video from the user
+// Constraints for getting specifically the outward facing camera without audio
 let constraints = {
   video: {
-    aspectRatio: { ideal: 1 },
+    facingMode: { ideal: 'environment' }
   },
   audio: false,
 };
-
+// Gets the mediaStream using the set constraints and plays it on the video element
 let mediaStream;
 navigator.mediaDevices.getUserMedia(constraints)
   .then((stream) => {
@@ -18,7 +18,9 @@ navigator.mediaDevices.getUserMedia(constraints)
     document.getElementById('video').srcObject = mediaStream;
     document.getElementById('video').play();
   })
-  .catch((error) => { console.error(`Failed to get video: ${error}`) });
+  .catch((error) => {
+    console.error(`Failed to get video: ${error}`);
+  });
 
 // Turns off camera when navigating away from the scanner
 onBeforeUnmount(() => {
@@ -27,11 +29,153 @@ onBeforeUnmount(() => {
     track.stop();
   });
 })
+
+// Captures frames to the canvas element (which is not displayed) to allow ImageData to be extracted and returned
+function frameCapture(params) {
+  try {
+    let player = document.getElementById('video');
+    let canvas = document.getElementById('frameCapture');
+
+    // Sets the canvas to the dimensions of the video
+    canvas.setAttribute('width', player.videoWidth);
+    canvas.setAttribute('height', player.videoHeight);
+
+    // Places the captured image into the canvas
+    const context = canvas.getContext('2d');
+    context.drawImage(player, 0, 0, player.videoWidth, player.videoHeight);
+
+    // Takes the image on the canvas and returns it's ImageData
+    return context.getImageData(0, 0, player.videoWidth, player.videoHeight);
+
+  } catch (error) {
+    console.error(`Failed to capture a frame: ${error}`);
+  }
+}
+
+//// Repeatedly decodes the frame while scanning is true
+const scanning = ref(false);
+function toggleScanning(event) {
+  console.log("Toggling Scanning");
+  scanning.value = !scanning.value;
+}
+// Runs decode repeatedly
+let intervalID;
+watch(scanning, async () => {
+  if (scanning.value) {
+    intervalID = setInterval(decode, 200);
+  } else {
+    clearInterval(intervalID);
+  }
+})
+// Create the worker to do the decoding on another thread
+const bartender = new Worker(new URL('@/decoding/bartender', import.meta.url), { type: 'module' });
+// Runs a decode to deal with the first run being long
+bartender.postMessage(null);
+// Send the image to bartender as long as another image isn't being processed (as recorded by 'working')
+let working = false;
+function decode() {
+  if (!working) {
+    working = true;
+    let image = frameCapture()
+    bartender.postMessage(image);
+  }
+}
+// Handles the return message from bartender, sets 'working'
+bartender.onmessage = async (result) => {
+  working = false;
+  console.log(result.data);
+  itemConfirm(result.data[0], result.data[1]);
+}
+// Gets information on the product from OpenFoodFacts
+async function getOFF(barcode) {
+  try {
+    let response = await fetch("https://world.openfoodfacts.net/api/v2/product/" + barcode + "?fields=product_name_en,allergens_tags,brand_owner,brand,categories_tags", { method: "GET" });
+    response = await response.json();
+    return response;
+  } catch (error) {
+    console.error(`Failed to get data from OFF: ${error}`);
+  }
+}
+// Shows the modal for confirmation of the scanned item
+async function itemConfirm(barcode, format) {
+  let modal = document.getElementById("itemConfirm");
+  
+  let dbItem = useDatabaseStore().getItemByCode(barcode);
+  let offData;
+  
+  if (format == "upc a" | "upc e" | "ean 13" | "ean 8") {
+    if (dbItem != undefined) {
+      fillModal(dbItem);
+    } else {
+      offData = await getOFF(barcode);
+      console.log(offData);
+      let offItem = {
+        barcode: barcode,
+        given_name: undefined,
+        off_name: offData.product.product_name_en,
+        number: 1,
+        allergens: offData.product.allergens_tags,
+        tags: undefined,
+        favorite: false,
+      }
+      fillModal(offItem);
+    }
+  }
+  modal.showModal();
+}
+
+// Fills the modal with the passed data
+let newItem = ref({
+  barcode: undefined,
+  given_name: undefined,
+  off_name: undefined,
+  number: undefined,
+  allergens: undefined,
+  tags: undefined,
+  favorite: undefined,
+})
+function fillModal(item) {
+  newItem.value.barcode = item.barcode;
+  newItem.value.given_name = item.given_name;
+  newItem.value.off_name = item.off_name;
+  newItem.value.number = item.number;
+  newItem.value.allergens = item.allergens;
+  newItem.value.tags = item.tags;
+  newItem.value.favorite = item.favorite;
+}
+// Just closes the modal
+function closeModal() {
+  document.getElementById("itemConfirm").close();
+}
+// Closes the modal, submitting the item to the database
+function submitModal() {
+  
+}
 </script>
 
 <template>
   <div id="videoWrapper">
-    <video id="video"></video>
+    <video id="video" playsinline></video>
+    <ul id="controls">
+      <button @click="toggleScanning">{{ scanning ? "Stop Scanning" : "Start Scanning" }}</button>
+      <button @click="decode()">Capture Frame</button>
+      <button>Button 3</button>
+    </ul>
+    <canvas id="frameCapture"></canvas>
+    <dialog id="itemConfirm">
+      <form>
+        <ul>
+          <li id="code">{{ newItem.barcode }}</li>
+          <li id="given_name">{{ newItem.given_name }}</li>
+          <li id="off_name">{{ newItem.off_name }}</li>
+          <li id="number">{{ newItem.number }}</li>
+          <li id="allergens">{{ newItem.allergens }}</li>
+          <li id="tags">{{ newItem.tags }}</li>
+          <li id="favorite">{{ newItem.favorite }}</li>
+        </ul>
+        <button @click.prevent="closeModal">Close</button>
+      </form>
+    </dialog>
   </div>
 </template>
 
@@ -39,14 +183,40 @@ onBeforeUnmount(() => {
 #videoWrapper {
   background-color: var(--accent-dark-grey);
   width: 90%;
-  height: 75%;
+  height: fit-content;
   margin: auto;
+  border-radius: 0% 0% 10px 10px;
+  border: 3px solid var(--accent-green);
+  border-collapse: collapse;
 }
 
 #video {
+  display: block;
   width: 100%;
   object-fit: cover;
   object-position: 50% 50%;
+}
+
+#controls {
+  background-color: var(--panel-color);
+  border-spacing: 0;
+  border-radius: inherit;
+  border-top: inherit;
+}
+
+#controls button {
+  border: none;
+  border-radius: none;
+  padding: 1.25rem;
+  transition: all .2s;
+}
+
+#controls button:first-of-type {
+  border-bottom-left-radius: 7px;
+}
+
+canvas {
+  display: none;
 }
 
 @media (min-width: 1024px) {

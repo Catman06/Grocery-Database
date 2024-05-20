@@ -1,5 +1,5 @@
 [package]
-name = "Rust_Functions"
+name = "rust_functions"
 description = "Allows JavaScript to use the rust version of the ZXing (Zebra Crossing) library via WebAssembly to decode barcodes"
 version = "0.1.0"
 edition = "2021"
