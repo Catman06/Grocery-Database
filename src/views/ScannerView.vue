@@ -84,10 +84,12 @@ function decode() {
 }
 // Handles the return message from bartender, sets 'working'
 bartender.onmessage = async (result) => {
-  scanning.value = false;
+  if (result.data[0] != "Nothing Found") {
+    scanning.value = false;
+    console.log(result.data);
+    itemConfirm(result.data[0], result.data[1]);
+  }
   working = false;
-  console.log(result.data);
-  itemConfirm(result.data[0], result.data[1]);
 }
 // Gets information on the product from OpenFoodFacts
 async function getOFF(barcode) {
@@ -107,20 +109,28 @@ async function itemConfirm(barcode, format) {
   await useDatabaseStore().update();
   let dbItem = useDatabaseStore().getItemByCode(barcode);
   let offData;
-
+  // Depending on whether the item already exists in the database, either fill the modal with the info from the database or OFF
   if (format == "upc a" | "upc e" | "ean 13" | "ean 8") {
     if (dbItem != undefined) {
       fillModal(dbItem);
     } else {
       offData = await getOFF(barcode);
       console.log(offData);
+      // Remove the 'en:' bit at the start of received allergens.
+      let allergens = offData.product.allergens_tags;
+      allergens.forEach((tag, index) => {
+        console.log(tag);
+        allergens[index] = tag.replace(/en:/, '');
+        console.log(tag);
+      });
+      console.log(allergens);
       let offItem = {
         barcode: barcode,
-        given_name: undefined,
+        given_name: offData.product.product_name_en,
         off_name: offData.product.product_name_en,
         number: 1,
-        allergens: offData.product.allergens_tags,
-        tags: undefined,
+        allergens: allergens,
+        tags: new Array,
         favorite: false,
       }
       fillModal(offItem);
@@ -215,6 +225,7 @@ function testItemModal() {
 #controls button:first-of-type {
   border-bottom-left-radius: 7px;
 }
+
 #controls button:last-of-type {
   border-bottom-right-radius: 7px;
 }

@@ -39,6 +39,7 @@ async function submitModal() {
 		itemForm.append("deleted", false);
 
 		// Update the database
+		console.info(itemForm);
 		await updateItem(itemForm);
 
 		// Update the store
@@ -51,7 +52,7 @@ async function submitModal() {
 }
 
 // Hold the current value of the favorite checkbox.
-let favorite = newItem.value.favorite;
+let favorite = (newItem.value.favorite === undefined ? false : newItem.value.favorite);
 function checkboxClick(event) {
 	favorite = !favorite;
 }
