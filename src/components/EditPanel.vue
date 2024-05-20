@@ -6,8 +6,7 @@ import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 
 const selected = ref(useDatabaseStore().selected);
-console.log('editPanel Loaded');
-console.log('selected: ' + selected.value);
+console.log('EditPanel Opened');
 const info = ref(useDatabaseStore().getItemByCode(selected.value));
 
 // When edit is clicked, sync any changes to the store then send the edit-clicked event

@@ -39,7 +39,6 @@ function closeEventRedirect(event) {
 	let dbItem;
 	dbItem = useDatabaseStore().getItemByCode(eventTarget.classList.item(0));
 	selected.value = dbItem.barcode;
-	console.log('changed selected to: ' + selected.value);
 }
 
 function sortTable(sort) {

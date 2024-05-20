@@ -31,7 +31,6 @@ function closePanel(event) {
 // Replaces the normal display panel with the one for editing
 const edit = ref(false);
 function openEditPanel(event) {
-	console.log('openEditPanel');
 	panel.value = false;
 	edit.value = true;
 }
