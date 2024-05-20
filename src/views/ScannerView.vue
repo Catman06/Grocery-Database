@@ -1,4 +1,5 @@
 <script setup>
+import AddModal from '@/components/AddModal.vue';
 import { useDatabaseStore } from '@/stores/database';
 import { onBeforeUnmount, ref, watch } from 'vue';
 
@@ -54,6 +55,7 @@ function frameCapture(params) {
 
 //// Repeatedly decodes the frame while scanning is true
 const scanning = ref(false);
+// Allows easy toggling of scanning
 function toggleScanning(event) {
   console.log("Toggling Scanning");
   scanning.value = !scanning.value;
@@ -82,6 +84,7 @@ function decode() {
 }
 // Handles the return message from bartender, sets 'working'
 bartender.onmessage = async (result) => {
+  scanning.value = false;
   working = false;
   console.log(result.data);
   itemConfirm(result.data[0], result.data[1]);
@@ -98,11 +101,13 @@ async function getOFF(barcode) {
 }
 // Shows the modal for confirmation of the scanned item
 async function itemConfirm(barcode, format) {
-  let modal = document.getElementById("itemConfirm");
-  
+  let modal = document.getElementById("itemModal");
+
+  // Try to get the item from the database, if it doesn't exist getItemByCode will return undefined
+  await useDatabaseStore().update();
   let dbItem = useDatabaseStore().getItemByCode(barcode);
   let offData;
-  
+
   if (format == "upc a" | "upc e" | "ean 13" | "ean 8") {
     if (dbItem != undefined) {
       fillModal(dbItem);
@@ -119,13 +124,15 @@ async function itemConfirm(barcode, format) {
         favorite: false,
       }
       fillModal(offItem);
+      console.log('newItem');
+      console.log(newItem);
     }
   }
   modal.showModal();
 }
 
 // Fills the modal with the passed data
-let newItem = ref({
+const newItem = ref({
   barcode: undefined,
   given_name: undefined,
   off_name: undefined,
@@ -139,18 +146,24 @@ function fillModal(item) {
   newItem.value.given_name = item.given_name;
   newItem.value.off_name = item.off_name;
   newItem.value.number = item.number;
-  newItem.value.allergens = item.allergens;
-  newItem.value.tags = item.tags;
+  newItem.value.allergens = (item.allergens === undefined ? new Array : item.allergens);
+  newItem.value.tags = (item.tags === undefined ? new Array : item.tags);
   newItem.value.favorite = item.favorite;
 }
-// Just closes the modal
-function closeModal() {
-  document.getElementById("itemConfirm").close();
+
+
+function testItemModal() {
+  newItem.value.barcode = 12345;
+  newItem.value.given_name = 'Test Name';
+  newItem.value.off_name = 'Test OFF Name';
+  newItem.value.number = 5;
+  newItem.value.allergens = ["allergen 1", "allergen 2"];
+  newItem.value.tags = ["tag 1", "tag 2"];
+  newItem.value.favorite = false;
+  document.getElementById("itemModal").showModal();
 }
-// Closes the modal, submitting the item to the database
-function submitModal() {
-  
-}
+
+
 </script>
 
 <template>
@@ -159,27 +172,14 @@ function submitModal() {
     <ul id="controls">
       <button @click="toggleScanning">{{ scanning ? "Stop Scanning" : "Start Scanning" }}</button>
       <button @click="decode()">Capture Frame</button>
-      <button>Button 3</button>
+      <button @click="testItemModal">Test Modal</button>
     </ul>
     <canvas id="frameCapture"></canvas>
-    <dialog id="itemConfirm">
-      <form>
-        <ul>
-          <li id="code">{{ newItem.barcode }}</li>
-          <li id="given_name">{{ newItem.given_name }}</li>
-          <li id="off_name">{{ newItem.off_name }}</li>
-          <li id="number">{{ newItem.number }}</li>
-          <li id="allergens">{{ newItem.allergens }}</li>
-          <li id="tags">{{ newItem.tags }}</li>
-          <li id="favorite">{{ newItem.favorite }}</li>
-        </ul>
-        <button @click.prevent="closeModal">Close</button>
-      </form>
-    </dialog>
+    <AddModal :item="newItem" :fullEdit="false" @closeModal="closeModal"></AddModal>
   </div>
 </template>
 
-<style>
+<style scoped>
 #videoWrapper {
   background-color: var(--accent-dark-grey);
   width: 90%;
@@ -207,12 +207,16 @@ function submitModal() {
 #controls button {
   border: none;
   border-radius: none;
-  padding: 1.25rem;
+  width: 33.333%;
+  padding: .8rem 0px;
   transition: all .2s;
 }
 
 #controls button:first-of-type {
   border-bottom-left-radius: 7px;
+}
+#controls button:last-of-type {
+  border-bottom-right-radius: 7px;
 }
 
 canvas {

@@ -59,11 +59,11 @@ function checkboxClick(event) {
 
 // Creates values for switching allergens and tags to and from edit mode
 const allergensEdit = ref(false);
-function toggleAllergenEdit(event) {
+function closeAllergenEdit(event) {
 	allergensEdit.value = false;
 }
 const tagsEdit = ref(false);
-function toggleTagEdit(event) {
+function closeTagEdit(event) {
 	tagsEdit.value = false;
 }
 
@@ -132,12 +132,12 @@ function parseTags(tags) {
 						<td class="barcode">{{ info.barcode }}</td>
 						<td class="off_name">{{ info.off_name }}</td>
 						<td class="allergens expanded" v-if="allergensEdit">
-							<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="toggleAllergenEdit" />
+							<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="closeAllergenEdit" />
 						</td>
 						<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ parseTags(allergens.toString()) }}
 						</td>
 						<td class="tags expanded" v-if="tagsEdit">
-							<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="toggleTagEdit" />
+							<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="closeTagEdit" />
 						</td>
 						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ parseTags(tags.toString()) }}</td>
 						<td><button class="edit bi-pencil-square" @click.prevent="saveClick"></button></td>

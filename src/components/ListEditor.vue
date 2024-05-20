@@ -2,6 +2,7 @@
 import { useDatabaseStore } from '@/stores/database';
 import { ref } from 'vue';
 const props = defineProps(['type', 'list']);
+console.log(props.list);
 const fullTagList = ref(useDatabaseStore().tagList(props.type));
 console.log(fullTagList.value);
 
@@ -25,7 +26,7 @@ function add(event) {
 		props.list.push(newTag);
 		document.getElementById(`new${props.type}`).value = '';
 	} catch (error) {
-		console.error(error);
+		console.error(`Failed to add tag: ${error}`);
 	}
 }
 
@@ -40,7 +41,7 @@ function close(event) {
 	<td class="dropdown">
 		<button id='closeButton' @click="close">Close</button>
 		<form class="addTag" @submit.stop.prevent="add">
-			<input v-bind:id="'new'+type" type="text" placeholder="New Tag" v-bind:list="type+'datalist'" pattern="[^\s\t\n\r\{\}\\\[\]]([^\t\n\r\{\}\\\[\]]?)+" size="1">
+			<input v-bind:id="'new'+type" type="text" placeholder="New Tag" v-bind:list="type+'datalist'" pattern="[^\s\t\n\r\{\}\\\[\]]([^\t\n\r\{\}\\\[\]]?)+">
 			<button id='addButton' class="bi-plus" type="submit"/>
 		</form>
 		<li class="dropdownContentWrapper" v-for="tag in list">
@@ -74,6 +75,7 @@ td {
 	z-index: 1;
 	background-color: inherit;
 	padding-bottom: .2rem;
+	margin:auto;
 }
 
 #closeButton {
@@ -93,7 +95,7 @@ td {
 }
 
 input {
-	width: 70%;
+	width: calc(90% - 1rem);
 }
 input:invalid {
 	background-color: lightpink;

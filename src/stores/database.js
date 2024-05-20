@@ -6,6 +6,10 @@ export const useDatabaseStore = defineStore('database', () => {
 	//// States
 	const items = ref(undefined);
 	const selected = ref(undefined);
+	const current_sort = ref({
+		sort: undefined,
+		reversed: false,
+	});
 	//// Getters
 
 	//// Actions
@@ -23,6 +27,7 @@ export const useDatabaseStore = defineStore('database', () => {
 	//Returns a list of all tags or allergens depending on the option passed
 	function tagList(type) {
 		let tags = [];
+		try {
 		if (type == 'allergens') {
 			// For each item
 			this.items.forEach(item => {
@@ -45,6 +50,10 @@ export const useDatabaseStore = defineStore('database', () => {
 			});
 		}
 		return tags;
+		} catch (error) {
+			console.error(`Failed to get tag list: ${error}`);
+			return new Array;
+		}
 	}
 
 	// Sorting
@@ -52,19 +61,23 @@ export const useDatabaseStore = defineStore('database', () => {
 		console.log("Sorting by " + sort);
 		switch (sort) {
 			case 'given_name':
+				this.current_sort.sort = sort;
 				this.items.sort(given_name);
 				break;
 
 			case 'number':
 				this.items.sort(number);
+				this.current_sort.sort = sort;
 				break;
 
 			case 'favorite':
 				this.items.sort(favorite);
+				this.current_sort.sort = sort;
 				break;
 
 			case 'reverse':
 				this.items.reverse();
+				this.current_sort.reverse = !this.current_sort.reversed;
 				break;
 
 			default:
@@ -78,10 +91,10 @@ export const useDatabaseStore = defineStore('database', () => {
 	// Updates the store
 	async function update() {
 		this.items = await loadTable();
-		this.sortTable('given_name');
+		this.sortTable(this.current_sort.sort);
 	}
 
-	return { items, selected, getItemByCode, tagList, sortTable, update };
+	return { items, selected, current_sort, getItemByCode, tagList, sortTable, update };
 
 })
 
