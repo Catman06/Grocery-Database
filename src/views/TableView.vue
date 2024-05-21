@@ -3,12 +3,12 @@ import TableItem from '../components/TableItem.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { useDatabaseStore } from '@/stores/database';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 await useDatabaseStore().update();
-const { items, selected, current_sort } = storeToRefs(useDatabaseStore());
-console.log("'items' Loaded");
-console.log(items);
+const { selected, current_sort, filtered_items } = storeToRefs(useDatabaseStore());
+console.log("Items Loaded");
+const items = filtered_items;
 
 // Takes the toggle-panel event and sends a close-panel event to all children but the one the initial event came from
 const closePanel = new Event('close-panel');

@@ -10,8 +10,100 @@ export const useDatabaseStore = defineStore('database', () => {
 		sort: undefined,
 		reversed: false,
 	});
+	const current_filter = ref('');
 
 	//// Getters
+	// Provides the items as defined by the search query
+	const filtered_items = computed(() => {
+		let query = current_filter.value;
+		// exact is true if the query is surrounded by single or double quotation marks
+		let exact = (query.startsWith('"') || query.startsWith("'")) && (query.endsWith('"') || query.endsWith("'"));
+		// regex is true if the query is surrounded by slashes, with allowance for ending flags
+		let regex = query.search(/^\/.+\/[gimsuy]{0,6}/) >= 0;
+		console.log(exact)
+		console.log(regex)
+
+		// Build the search's Regex pattern
+		let pattern;
+		if (exact) {
+			// Case-Sensitive
+			pattern = new RegExp(query);
+		} else if (regex) {
+			// query is Regex
+			let flags = RegExp(/\/([gimsuy]{0,6})$/).exec(query)[1];
+			query = RegExp(/\/(.+)\//).exec(query)[1];
+			pattern = new RegExp(query, flags);
+		} else {
+			// Normal Case-Insensetive
+			pattern = new RegExp(query, "i");
+		}
+		console.log(pattern);
+
+		return items.value.filter((item) => {
+			let barcode = item.barcode;
+			let given_name = item.given_name;
+			let off_name = item.off_name;
+			let allergens = item.allergens.toString();
+			let tags = item.tags.toString();
+
+			// Check using the pattern
+			if (0 <= barcode.search(pattern) ||
+				0 <= given_name.search(pattern) ||
+				0 <= off_name.search(query) ||
+				0 <= allergens.search(pattern) ||
+				0 <= tags.search(pattern)) {
+				return true;
+			} else {
+				return false;
+			}
+
+
+
+
+			// Normal mode
+			if (!exact && !regex) {
+				query = query.toLocaleUpperCase();
+				if (barcode.toLocaleUpperCase().includes(query) ||
+					given_name.toLocaleUpperCase().includes(query) ||
+					off_name.toLocaleUpperCase().includes(query) ||
+					allergens.toLocaleUpperCase().includes(query) ||
+					tags.toLocaleUpperCase().includes(query)) {
+
+					return true;
+				} else {
+					return false;
+				}
+				// Exact mode
+			} else if (exact) {
+				if (barcode.includes(query) ||
+					given_name.includes(query) ||
+					off_name.includes(query) ||
+					allergens.includes(query) ||
+					tags.includes(query)) {
+
+					return true;
+				} else {
+					return false;
+				}
+				// RegEx mode
+			} else if (regex) {
+				// Build a regex pattern from the passed regex pattern
+				let flags
+				console.log(query);
+				query = new RegExp(query);
+				console.log(query);
+				if (0 <= barcode.search(query) ||
+					0 <= given_name.search(query) ||
+					0 <= off_name.search(query) ||
+					0 <= allergens.search(query) ||
+					0 <= tags.search(query)) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		})
+	});
 
 	//// Actions
 	// Returns the item with the passed barcode.
@@ -29,28 +121,28 @@ export const useDatabaseStore = defineStore('database', () => {
 	function tagList(type) {
 		let tags = [];
 		try {
-		if (type == 'allergens') {
-			// For each item
-			this.items.forEach(item => {
-				// For each allergen
-				item.allergens.forEach(tag => {
-					if (!tags.includes(tag)) {
-						tags.push(tag);
-					}
+			if (type == 'allergens') {
+				// For each item
+				this.items.forEach(item => {
+					// For each allergen
+					item.allergens.forEach(tag => {
+						if (!tags.includes(tag)) {
+							tags.push(tag);
+						}
+					});
 				});
-			});
-		} else if (type == 'tags') {
-			// For each item
-			this.items.forEach(item => {
-				// For each allergen
-				item.tags.forEach(tag => {
-					if (!tags.includes(tag)) {
-						tags.push(tag);
-					}
+			} else if (type == 'tags') {
+				// For each item
+				this.items.forEach(item => {
+					// For each allergen
+					item.tags.forEach(tag => {
+						if (!tags.includes(tag)) {
+							tags.push(tag);
+						}
+					});
 				});
-			});
-		}
-		return tags;
+			}
+			return tags;
 		} catch (error) {
 			console.error(`Failed to get tag list: ${error}`);
 			return new Array;
@@ -93,7 +185,7 @@ export const useDatabaseStore = defineStore('database', () => {
 		this.sortTable(this.current_sort.sort);
 	}
 
-	return { items, selected, current_sort, getItemByCode, tagList, sortTable, update };
+	return { items, selected, current_sort, current_filter, filtered_items, getItemByCode, tagList, sortTable, update };
 
 })
 
