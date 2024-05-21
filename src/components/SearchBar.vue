@@ -3,11 +3,9 @@ import { ref } from 'vue';
 import { storeToRefs } from "pinia";
 import { useDatabaseStore } from "@/stores/database";
 
-const { filtered_items, current_filter } = storeToRefs(useDatabaseStore());
+const { current_filter } = storeToRefs(useDatabaseStore());
 function setQuery() {
 	current_filter.value = document.getElementById('query').value;
-	console.log(current_filter.value);
-	console.log(filtered_items.value);
 }
 </script>
 
@@ -19,3 +17,7 @@ function setQuery() {
 		</form>
 	</div>
 </template>
+
+<style scoped>
+
+</style>

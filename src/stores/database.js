@@ -20,8 +20,6 @@ export const useDatabaseStore = defineStore('database', () => {
 		let exact = (query.startsWith('"') || query.startsWith("'")) && (query.endsWith('"') || query.endsWith("'"));
 		// regex is true if the query is surrounded by slashes, with allowance for ending flags
 		let regex = query.search(/^\/.+\/[gimsuy]{0,6}/) >= 0;
-		console.log(exact)
-		console.log(regex)
 
 		// Build the search's Regex pattern
 		let pattern;
@@ -37,7 +35,6 @@ export const useDatabaseStore = defineStore('database', () => {
 			// Normal Case-Insensetive
 			pattern = new RegExp(query, "i");
 		}
-		console.log(pattern);
 
 		return items.value.filter((item) => {
 			let barcode = item.barcode;
@@ -55,52 +52,6 @@ export const useDatabaseStore = defineStore('database', () => {
 				return true;
 			} else {
 				return false;
-			}
-
-
-
-
-			// Normal mode
-			if (!exact && !regex) {
-				query = query.toLocaleUpperCase();
-				if (barcode.toLocaleUpperCase().includes(query) ||
-					given_name.toLocaleUpperCase().includes(query) ||
-					off_name.toLocaleUpperCase().includes(query) ||
-					allergens.toLocaleUpperCase().includes(query) ||
-					tags.toLocaleUpperCase().includes(query)) {
-
-					return true;
-				} else {
-					return false;
-				}
-				// Exact mode
-			} else if (exact) {
-				if (barcode.includes(query) ||
-					given_name.includes(query) ||
-					off_name.includes(query) ||
-					allergens.includes(query) ||
-					tags.includes(query)) {
-
-					return true;
-				} else {
-					return false;
-				}
-				// RegEx mode
-			} else if (regex) {
-				// Build a regex pattern from the passed regex pattern
-				let flags
-				console.log(query);
-				query = new RegExp(query);
-				console.log(query);
-				if (0 <= barcode.search(query) ||
-					0 <= given_name.search(query) ||
-					0 <= off_name.search(query) ||
-					0 <= allergens.search(query) ||
-					0 <= tags.search(query)) {
-					return true;
-				} else {
-					return false;
-				}
 			}
 		})
 	});

@@ -23,10 +23,14 @@ time, mark, audio, video {
   font-weight: normal;
 }
 
+#app>header {
+  flex-wrap: wrap;
+}
+
 a,
 .green {
   text-decoration: none;
-  color: rgb(87, 199, 111);
+  color: rgb(0, 0, 0);
   transition: 0.4s;
   padding: 3px;
 }
