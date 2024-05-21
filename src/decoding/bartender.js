@@ -1,4 +1,4 @@
-import init, { check_barcode } from '@/rust/pkg/Rust_Functions.js'
+import init, { check_barcode } from '@/rust/pkg/rust_runctions.js'
 
 
 console.log('Bartender: Created');

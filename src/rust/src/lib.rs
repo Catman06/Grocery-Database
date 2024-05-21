@@ -1,5 +1,7 @@
 use barcode_reader::{fill_hints, image_prep, scan};
+use regex::Regex;
 use rxing:: { DecodeHintType, DecodeHintValue, DecodingHintDictionary, Exceptions, MultiFormatReader };
+use serde:: { Serialize, Deserialize };
 use wasm_bindgen::prelude::*;
 
 pub mod barcode_reader;
@@ -47,4 +49,49 @@ pub fn check_barcode(width: u32 , height: u32, image_vec:Vec<u8>) -> Result<JsVa
         // If there was a different error (i.e. an actual one, not just not finding anything) pass that error up to WASM
         Err(other_error) => return Err( JsError::new(&other_error.to_string()) )
     };
+}
+
+// Struct for items from the database
+#[derive(Serialize, Deserialize)]
+pub struct Item {
+    barcode: String,
+    given_name: String,
+    off_name: String,
+    number: i32,
+    allergens: Vec<String>,
+    tags: Vec<String>,
+    favorite: bool,
+}
+
+//// Return all items that are included in a search query
+#[wasm_bindgen]
+pub fn search(query: String, in_database:Vec<JsValue>) -> Result<JsValue, JsError> {
+	// Setup 'database' as the full database
+    let mut database: Vec<Item> = vec![];
+	for item in in_database {
+		match serde_wasm_bindgen::from_value::<Item>(item) {
+            // For the Items in database check each one for matching the search query
+            // The ones that pass get added into out_database
+			Ok(item) => {
+                // Create a RegEx pattern from the query
+                let pattern = format!(r"{}", query);
+                let re = Regex::new(pattern.as_str()).unwrap();
+
+                // Test barcode
+                if re.is_match(&item.barcode) {
+                    database.push(item);
+                // Test given_name
+                } else if re.is_match(&item.given_name) {
+                    database.push(item);
+                }
+            },
+			Err(e) => return Err( JsError::new(&e.to_string())),
+		}		
+	}
+
+    // Returns 'database' as an array of the Items to Javascript
+    match serde_wasm_bindgen::to_value(&database) {
+		Ok(x) => Ok(x),
+		Err(e) => return Err( JsError::new(&e.to_string()))
+	}
 }

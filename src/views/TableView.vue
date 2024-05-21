@@ -1,5 +1,4 @@
 <script setup>
-import { loadTable } from '@/database_interaction/dbAccess';
 import TableItem from '../components/TableItem.vue';
 import { useDatabaseStore } from '@/stores/database';
 import { storeToRefs } from 'pinia';
@@ -28,13 +27,13 @@ function closeEventRedirect(event) {
 		} else {
 			// If the clicked item is the expanded one, un-expand it
 			if (item.getAttribute('aria-expanded') == 'true') {
-				item.setAttribute('aria-expanded', false);	
+				item.setAttribute('aria-expanded', false);
 			} else {
-				item.setAttribute('aria-expanded', true);				
+				item.setAttribute('aria-expanded', true);
 			}
 		}
 	});
-	
+
 	// Set 'selected' to the clicked item's code for the store
 	let dbItem;
 	dbItem = useDatabaseStore().getItemByCode(eventTarget.classList.item(0));
@@ -50,9 +49,18 @@ function sortTable(sort) {
 	}
 }
 
+// WASM Test
+import init, { search } from '@/rust/pkg/rust_functions.js'
+function testSearch(query) {
+	init().then(() => {
+		console.log(search(query, items.value));
+	})
+}
+
 </script>
 
 <template>
+	<button @click="testSearch('Test')">Test WASM</button>
 	<div>
 		<table id="mainTable" class="table">
 			<thead>
@@ -61,7 +69,7 @@ function sortTable(sort) {
 				<th @click="sortTable('favorite')">Favorite</th>
 			</thead>
 			<tbody @toggle-panel="closeEventRedirect">
-					<TableItem v-for="info in items" :key="info.barcode":info="info" />
+				<TableItem v-for="info in items" :key="info.barcode" :info="info" />
 			</tbody>
 		</table>
 	</div>
