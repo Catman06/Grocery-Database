@@ -86,14 +86,6 @@ export const useDatabaseStore = defineStore('database', () => {
 		}
 	}
 
-	// Return the list of items filtered by the passed search query
-	function filteredItems(query) {
-		return ref(this.items.filter(() => {
-			
-
-		}));
-	}
-
 
 	// Updates the store
 	async function update() {
@@ -101,15 +93,9 @@ export const useDatabaseStore = defineStore('database', () => {
 		this.sortTable(this.current_sort.sort);
 	}
 
-	return { items, selected, current_sort, filteredItems, getItemByCode, tagList, sortTable, update };
+	return { items, selected, current_sort, getItemByCode, tagList, sortTable, update };
 
 })
-
-//// Filters the items based on search criteria
-function searchName(query) {
-
-}
-
 
 //// Sorts
 function given_name(a, b) {

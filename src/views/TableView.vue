@@ -1,5 +1,6 @@
 <script setup>
 import TableItem from '../components/TableItem.vue';
+import SearchBar from '@/components/SearchBar.vue';
 import { useDatabaseStore } from '@/stores/database';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
@@ -48,19 +49,12 @@ function sortTable(sort) {
 		useDatabaseStore().sortTable(sort);
 	}
 }
-
-// WASM Test
-import init, { search } from '@/rust/pkg/rust_functions.js'
-function testSearch(query) {
-	init().then(() => {
-		console.log(search(query, items.value));
-	})
-}
-
 </script>
 
 <template>
-	<button @click="testSearch('Test')">Test WASM</button>
+	<Teleport to="header">
+		<SearchBar></SearchBar>
+	</Teleport>
 	<div>
 		<table id="mainTable" class="table">
 			<thead>
