@@ -58,10 +58,18 @@ function checkboxClick(event) {
 
 // Creates values for switching allergens and tags to and from edit mode
 const allergensEdit = ref(false);
+function openAllergenEdit(event) {
+	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') { return };
+	allergensEdit.value = true;
+}
 function closeAllergenEdit(event) {
 	allergensEdit.value = false;
 }
 const tagsEdit = ref(false);
+function openTagEdit(event) {
+	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') { return };
+	tagsEdit.value = true;
+}
 function closeTagEdit(event) {
 	tagsEdit.value = false;
 }
@@ -69,7 +77,8 @@ function closeTagEdit(event) {
 // Stuff for the delete function and it's modal
 let modal;
 function deleteModal(event) {
-	if (event.key != 'Enter' && event.type != 'click') { return }
+	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') { return };
+	event.preventDefault();
 	modal = document.getElementById("deleteModal");
 	console.log("DeleteConfirm");
 	modal.showModal();
@@ -112,8 +121,8 @@ function parseTags(tags) {
 						</td>
 						<td class="favoritePanel"><input type="checkbox" class="favorite" v-bind:checked="info.favorite"
 								@change="checkboxClick" /></td>
-						<td class="delete bi-trash-fill" @click="deleteModal" @keydown.prevent="deleteModal" tabindex="0"></td>
-						<dialog id="deleteModal" tabindex="-1">
+						<td class="delete bi-trash-fill" @click="deleteModal" @keydown="deleteModal" tabindex="0"></td>
+						<dialog id="deleteModal">
 							<h3>Really Delete?</h3>
 							<button @click="closeModal">No</button>
 							<button @click="deleteConfirmed">Yes</button>
@@ -134,12 +143,12 @@ function parseTags(tags) {
 						<td class="allergens expanded" v-if="allergensEdit">
 							<ListEditor v-bind:type="'allergens'" v-bind:list="allergens" @close-button="closeAllergenEdit" />
 						</td>
-						<td class="allergens" @click="allergensEdit = !allergensEdit" v-else>{{ parseTags(allergens.toString()) }}
+						<td class="allergens" @click="openAllergenEdit" @keydown="openAllergenEdit" tabindex="0"  v-else>{{ parseTags(allergens.toString()) }}
 						</td>
 						<td class="tags expanded" v-if="tagsEdit">
 							<ListEditor v-bind:type="'tags'" v-bind:list="tags" @close-button="closeTagEdit" />
 						</td>
-						<td class="tags" @click="tagsEdit = !tagsEdit" v-else>{{ parseTags(tags.toString()) }}</td>
+						<td class="tags" @click="openTagEdit" @keydown="openTagEdit" tabindex="0" v-else>{{ parseTags(tags.toString()) }}</td>
 						<td><button class="edit bi-pencil-square" @click.prevent="saveClick"></button></td>
 					</tbody>
 				</table>

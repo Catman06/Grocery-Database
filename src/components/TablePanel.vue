@@ -4,7 +4,7 @@ const props = defineProps(['info']);
 // When the edit button gets clicked, send an event up the DOM
 const editButtonEvent = new Event('edit-clicked', { bubbles: true });
 function editClick(event) {
-	if (event.key != 'Enter' && event.type != 'click') { return }
+	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') { return }
 	// Ensures it doesn't matter if the image or div is what was clicked
 	let tdTarget = event.target;
 	if (tdTarget.className != 'edit') {

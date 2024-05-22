@@ -42,7 +42,7 @@ function closeEventRedirect(event) {
 }
 
 function sortTable(sort, event) {
-	if (event.key != 'Enter' && event.type != 'click') { return }
+	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') { return }
 	if (current_sort.value.sort == sort) {
 		useDatabaseStore().sortTable('reverse');
 	} else {

@@ -12,7 +12,7 @@ const panel = ref(false);
 // if the panel is in edit mode, exit edit mode
 const panelEvent = new Event('toggle-panel', { bubbles: true });
 function togglePanel(event) {
-	if (event.key != 'Enter' && event.type != 'click') {
+	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') {
 		return;
 	}
 
