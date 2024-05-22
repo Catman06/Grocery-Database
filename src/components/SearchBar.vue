@@ -19,5 +19,13 @@ function setQuery() {
 </template>
 
 <style scoped>
+#searchWrapper {
+	margin: auto;
+}
 
+#searchWrapper button {
+	border: solid 1px var(--accent-dark-grey);
+	border-radius: 0px 5px 5px 0px;
+	padding: 2px 8px;
+}
 </style>

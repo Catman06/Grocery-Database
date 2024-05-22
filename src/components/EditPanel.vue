@@ -68,7 +68,8 @@ function closeTagEdit(event) {
 
 // Stuff for the delete function and it's modal
 let modal;
-function deleteModal() {
+function deleteModal(event) {
+	if (event.key != 'Enter' && event.type != 'click') { return }
 	modal = document.getElementById("deleteModal");
 	console.log("DeleteConfirm");
 	modal.showModal();
@@ -111,11 +112,11 @@ function parseTags(tags) {
 						</td>
 						<td class="favoritePanel"><input type="checkbox" class="favorite" v-bind:checked="info.favorite"
 								@change="checkboxClick" /></td>
-						<td class="delete bi-trash-fill" @click="deleteModal"></td>
-						<dialog id="deleteModal">
+						<td class="delete bi-trash-fill" @click="deleteModal" @keydown.prevent="deleteModal" tabindex="0"></td>
+						<dialog id="deleteModal" tabindex="-1">
 							<h3>Really Delete?</h3>
-							<button @click="deleteConfirmed">Yes</button>
 							<button @click="closeModal">No</button>
+							<button @click="deleteConfirmed">Yes</button>
 						</dialog>
 					</tbody>
 				</table>

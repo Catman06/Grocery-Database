@@ -4,6 +4,7 @@ const props = defineProps(['info']);
 // When the edit button gets clicked, send an event up the DOM
 const editButtonEvent = new Event('edit-clicked', { bubbles: true });
 function editClick(event) {
+	if (event.key != 'Enter' && event.type != 'click') { return }
 	// Ensures it doesn't matter if the image or div is what was clicked
 	let tdTarget = event.target;
 	if (tdTarget.className != 'edit') {
@@ -35,7 +36,7 @@ function parseTags(tags) {
 					<td class="off_name">{{ info.off_name }}</td>
 					<td class="allergens">{{ parseTags(info.allergens.toString()) }}</td>
 					<td class="tags">{{ parseTags(info.tags.toString()) }}</td>
-					<td class="edit bi-pencil-square" @click="editClick"></td>
+					<td class="edit bi-pencil-square" @click="editClick" @keydown="editClick" tabindex="0"></td>
 				</tbody>
 			</table>
 		</td>
@@ -77,17 +78,19 @@ tbody>td {
 
 .edit:hover {
 	background-color: var(--item-hover);
-	cursor:pointer;
+	cursor: pointer;
 }
+
 .edit:active {
 	background-color: var(--accent-green);
 }
+
 .edit.selected:active {
 	background-color: var(--item-active);
 }
 
 /* Adds horizontal dividers */
 td:not(:last-of-type) {
-  border-right: solid 1px;
+	border-right: solid 1px;
 }
 </style>

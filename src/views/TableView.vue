@@ -41,7 +41,8 @@ function closeEventRedirect(event) {
 	selected.value = dbItem.barcode;
 }
 
-function sortTable(sort) {
+function sortTable(sort, event) {
+	if (event.key != 'Enter' && event.type != 'click') { return }
 	if (current_sort.value.sort == sort) {
 		useDatabaseStore().sortTable('reverse');
 	} else {
@@ -58,9 +59,9 @@ function sortTable(sort) {
 	<div>
 		<table id="mainTable" class="table">
 			<thead>
-				<th @click="sortTable('given_name')">Name</th>
-				<th @click="sortTable('number')">Number</th>
-				<th @click="sortTable('favorite')">Favorite</th>
+				<th @click="(event) => sortTable('given_name', event)" @keydown="(event) => sortTable('given_name', event)" tabindex="0">Name</th>
+				<th @click="(event) => sortTable('number', event)" @keydown="(event) => sortTable('number', event)" tabindex="0">Number</th>
+				<th @click="(event) => sortTable('favorite', event)" @keydown="(event) => sortTable('favorite', event)" tabindex="0">Favorite</th>
 			</thead>
 			<tbody @toggle-panel="closeEventRedirect">
 				<TableItem v-for="info in items" :key="info.barcode" :info="info" />
