@@ -151,7 +151,9 @@ const newItem = ref({
   tags: undefined,
   favorite: undefined,
 })
+let fullEdit = ref(false);
 function fillModal(item) {
+  fullEdit.value = false;
   newItem.value.barcode = item.barcode;
   newItem.value.given_name = item.given_name;
   newItem.value.off_name = item.off_name;
@@ -162,13 +164,14 @@ function fillModal(item) {
 }
 
 
-function testItemModal() {
-  newItem.value.barcode = 12345;
-  newItem.value.given_name = 'Test Name';
-  newItem.value.off_name = 'Test OFF Name';
-  newItem.value.number = 5;
-  newItem.value.allergens = ["allergen 1", "allergen 2"];
-  newItem.value.tags = ["tag 1", "tag 2"];
+function manualItemModal() {
+  fullEdit.value = true;
+  newItem.value.barcode = '';
+  newItem.value.given_name = '';
+  newItem.value.off_name = '';
+  newItem.value.number = 1;
+  newItem.value.allergens = [];
+  newItem.value.tags = [];
   newItem.value.favorite = false;
   document.getElementById("itemModal").showModal();
 }
@@ -182,10 +185,10 @@ function testItemModal() {
     <ul id="controls">
       <button @click="toggleScanning">{{ scanning ? "Stop Scanning" : "Start Scanning" }}</button>
       <button @click="decode()">Capture Frame</button>
-      <button @click="testItemModal">Test Modal</button>
+      <button @click="manualItemModal">Add Item Manually</button>
     </ul>
     <canvas id="frameCapture"></canvas>
-    <AddModal :item="newItem" :fullEdit="false" @closeModal="closeModal"></AddModal>
+    <AddModal :item="newItem" :fullEdit="fullEdit" @closeModal="closeModal"></AddModal>
   </div>
 </template>
 

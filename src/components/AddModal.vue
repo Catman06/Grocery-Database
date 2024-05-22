@@ -63,14 +63,14 @@ function checkboxClick(event) {
 		<ul>
 			<div>
 				<label for="code">Barcode</label>
-				<input type="text" id="code" v-bind:value="newItem.barcode" v-bind:readonly="!fullEdit" />
+				<input type="text" id="code" v-bind:value="newItem.barcode" v-bind:readonly="!fullEdit" placeholder="Barcode">
 			</div>
 			<div>
 				<label for="given_name">Name</label>
-				<input type="text" id="given_name" v-bind:value="newItem.given_name"
+				<input type="text" id="given_name" v-bind:value="newItem.given_name" placeholder="Item Name"
 					pattern="[^\s\t\n\r\{\}\\\[\]]([^\t\n\r\{\}\\\[\]]?)+"/>
 			</div>
-			<div>
+			<div v-show="!fullEdit">
 				<label for="off_name">OFF Name</label>
 				<input type="text" id="off_name" v-bind:value="newItem.off_name" v-bind:readonly="!fullEdit" />
 			</div>

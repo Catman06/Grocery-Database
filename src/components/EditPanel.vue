@@ -6,7 +6,6 @@ import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 
 const selected = ref(useDatabaseStore().selected);
-console.log('EditPanel Opened');
 const info = ref(useDatabaseStore().getItemByCode(selected.value));
 
 // When edit is clicked, sync any changes to the store then send the edit-clicked event
@@ -47,7 +46,6 @@ async function syncToStore() {
 	}
 }
 // Creates a local deep copy for holding temporary changes to the arrays
-console.log(info);
 const allergens = ref(JSON.parse(JSON.stringify(info.value.allergens)));
 const tags = ref(JSON.parse(JSON.stringify(info.value.tags)));
 

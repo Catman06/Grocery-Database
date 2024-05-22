@@ -12,20 +12,20 @@ const panel = ref(false);
 // if the panel is in edit mode, exit edit mode
 const panelEvent = new Event('toggle-panel', { bubbles: true });
 function togglePanel(event) {
-	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') {
-		return;
-	}
+	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') { return };
 
 	event.target.dispatchEvent(panelEvent);
-	if (edit.value) {
+	if (edit.value == true) {
 		edit.value = false;
+		panel.value = false;
+	} else {
+		panel.value = !panel.value;
 	}
-	panel.value = !panel.value;
 }
 
 function closePanel(event) {
-	panel.value = false;
 	edit.value = false;
+	panel.value = false;
 }
 
 // Replaces the normal display panel with the one for editing
@@ -46,11 +46,11 @@ function closeEditPanel(event) {
 		@keydown="togglePanel" @close-panel="closePanel">
 		<td class="name">{{ info.given_name }}</td>
 		<td>{{ info.number }}</td>
-		<td class="favorite">{{ info.favorite ? '*' : ''}}</td>
+		<td class="favorite">{{ info.favorite ? '*' : '' }}</td>
 	</tr>
 	<slot></slot>
-	<TablePanel v-if="panel" rowspan="3" :info="info" @edit-clicked="openEditPanel"/>
-	<EditPanel v-if="edit" @save-clicked="closeEditPanel" @deleted="closePanel"/>
+	<TablePanel v-if="panel" rowspan="3" :info="info" @edit-clicked="openEditPanel" />
+	<EditPanel v-if="edit" @save-clicked="closeEditPanel" @deleted="closePanel" />
 </template>
 
 <style scoped>
