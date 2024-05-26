@@ -12,8 +12,9 @@ function setQuery() {
 <template>
 	<div id="searchWrapper">
 		<form @submit.prevent="setQuery">
-			<input id="query" type="text" />
-			<button type="submit" class="bi-search"></button>
+			<label for="query" class="hidden">Search Box</label>
+			<input id="query" type="text" placeholder="Search"/>
+			<button type="submit" class="bi-search" aria-label="Search Button"></button>
 		</form>
 	</div>
 </template>

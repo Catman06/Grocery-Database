@@ -59,7 +59,7 @@ function checkboxClick(event) {
 </script>
 
 <template>
-	<dialog id="itemModal">
+	<dialog id="itemModal" role="dialog">
 		<ul>
 			<div>
 				<label for="code">Barcode</label>
