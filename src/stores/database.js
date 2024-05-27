@@ -27,8 +27,6 @@ export const useDatabaseStore = defineStore('database', () => {
 			// Case-Sensitive
 			query = RegExp(/"(.+)"/).exec(query)[1];
 			pattern = new RegExp(query);
-			console.log('exact');
-			console.log(pattern);
 		} else if (regex) {
 			// query is Regex
 			let flags = RegExp(/\/([gimsuy]{0,6})$/).exec(query)[1];
