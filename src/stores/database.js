@@ -10,12 +10,19 @@ export const useDatabaseStore = defineStore('database', () => {
 		sort: undefined,
 		reversed: false,
 	});
-	const current_filter = ref('');
+	const current_filter = ref({
+		text: '',
+		barcode: true,
+		given_name: true,
+		off_name: true,
+		allergens: true,
+		tags: true
+	});
 
 	//// Getters
 	// Provides the items as defined by the search query
 	const filtered_items = computed(() => {
-		let query = current_filter.value;
+		let query = current_filter.value.text;
 		// exact is true if the query is surrounded by single or double quotation marks
 		let exact = (query.startsWith('"') || query.startsWith("'")) && (query.endsWith('"') || query.endsWith("'"));
 		// regex is true if the query is surrounded by slashes, with allowance for ending flags
@@ -25,7 +32,7 @@ export const useDatabaseStore = defineStore('database', () => {
 		let pattern;
 		if (exact) {
 			// Case-Sensitive
-			query = RegExp(/"(.+)"/).exec(query)[1];
+			query = RegExp(/["'](.+)["']/).exec(query)[1];
 			pattern = new RegExp(query);
 		} else if (regex) {
 			// query is Regex
@@ -44,12 +51,14 @@ export const useDatabaseStore = defineStore('database', () => {
 			let allergens = item.allergens.toString();
 			let tags = item.tags.toString();
 
+			console.log()
+
 			// Check using the pattern
-			if (0 <= barcode.search(pattern) ||
-				0 <= given_name.search(pattern) ||
-				0 <= off_name.search(query) ||
-				0 <= allergens.search(pattern) ||
-				0 <= tags.search(pattern)) {
+			if ((current_filter.value.barcode && 0 <= barcode.search(pattern)) ||
+				(current_filter.value.given_name && 0 <= given_name.search(pattern)) ||
+				(current_filter.value.off_name && 0 <= off_name.search(query)) ||
+				(current_filter.value.allergens && 0 <= allergens.search(pattern)) ||
+				(current_filter.value.tags && 0 <= tags.search(pattern))) {
 				return true;
 			} else {
 				return false;
