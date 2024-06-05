@@ -63,6 +63,10 @@ tbody>td {
 	background-color: var(--panel-header-color);
 }
 
+.barcode {
+	overflow-wrap: anywhere;
+}
+
 .allergens {
 	max-width: 35%;
 }

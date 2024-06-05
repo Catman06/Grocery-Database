@@ -51,8 +51,6 @@ export const useDatabaseStore = defineStore('database', () => {
 			let allergens = item.allergens.toString();
 			let tags = item.tags.toString();
 
-			console.log()
-
 			// Check using the pattern
 			if ((current_filter.value.barcode && 0 <= barcode.search(pattern)) ||
 				(current_filter.value.given_name && 0 <= given_name.search(pattern)) ||

@@ -186,6 +186,10 @@ input:invalid {
 	transition: all .2s;
 }
 
+.barcode {
+	overflow-wrap: anywhere;
+}
+
 .numberPanel,
 .favoritePanel,
 .delete {
