@@ -34,6 +34,8 @@
     /* Table Items */
     --item-hover: #304030;
     --item-active: #465e46;
+    --panel-color: #4d634d;
+    --panel-header-color: var(--accent-green);
 }
 }
 
