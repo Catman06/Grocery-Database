@@ -39,7 +39,11 @@ function toggleDropdown(event) {
 <template>
 	<div id="searchWrapper">
 		<form @submit.prevent="setQuery">
-			<button id="searchOptionToggle" class="bi-caret-right" @click="toggleDropdown" @keydown="toggleDropdown" tabindex="0"></button>
+			<button id="searchOptionToggle" class="bi-caret-right" @click="toggleDropdown" @keydown="toggleDropdown" tabindex="0">
+				<span class="tooltipText">
+					Select what columns to search
+				</span>
+			</button>
 			<div id="searchOptions" class="dropdown">
 				<div class="dropdownContent" v-show="open">
 					<input type="checkbox" id="searchCode" checked="true" @change="code = !code"/>
@@ -82,5 +86,37 @@ function toggleDropdown(event) {
 	position: relative;
 	padding: 5px;
   border-radius: 5px;
+}
+
+#searchOptionToggle {
+	position: relative;
+}
+
+@media (hover: hover) {
+	#searchOptionToggle:hover .tooltipText {
+		visibility: visible;
+	}
+}
+
+#searchOptionToggle .tooltipText {
+	position: absolute;
+	visibility: hidden;
+	background-color: #555;
+	color: var(--font-color);
+	text-align: center;
+	z-index: 2;
+	left: -200%;
+	top:140%;
+	width: 13rem;
+	border-radius: 5px;
+}
+#searchOptionToggle .tooltipText::before {
+	content: "";
+	position: absolute;
+	left: 22%;
+	bottom: 100%;
+	border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #555 transparent;
 }
 </style>
