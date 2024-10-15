@@ -27,11 +27,11 @@ function toggleDropdown(event) {
 	if (event.key != 'Enter' && event.type != 'click' && event.key != ' ') { return };
 	open.value = !open.value;
 	if (open.value) {
-		document.getElementById("searchOptionToggle").classList.remove("bi-caret-right");
-		document.getElementById("searchOptionToggle").classList.add("bi-caret-down");
+		document.getElementById("searchOptionToggle").classList.remove("bi-caret-right-fill");
+		document.getElementById("searchOptionToggle").classList.add("bi-caret-down-fill");
 	} else {
-		document.getElementById("searchOptionToggle").classList.remove("bi-caret-down");
-		document.getElementById("searchOptionToggle").classList.add("bi-caret-right");
+		document.getElementById("searchOptionToggle").classList.remove("bi-caret-down-fill");
+		document.getElementById("searchOptionToggle").classList.add("bi-caret-right-fill");
 	}
 }
 </script>
@@ -39,7 +39,7 @@ function toggleDropdown(event) {
 <template>
 	<div id="searchWrapper">
 		<form @submit.prevent="setQuery">
-			<button id="searchOptionToggle" class="bi-caret-right" @click="toggleDropdown" @keydown="toggleDropdown" tabindex="0">
+			<button id="searchOptionToggle" class="bi-caret-right-fill" @click="toggleDropdown" @keydown="toggleDropdown" tabindex="0">
 				<span class="tooltipText">
 					Select what columns to search
 				</span>
@@ -90,6 +90,9 @@ function toggleDropdown(event) {
 
 #searchOptionToggle {
 	position: relative;
+	border: solid 1px var(--accent-dark-grey);
+	border-radius: 5px 0px 0px 5px;
+	padding: 2px 6px;
 }
 
 @media (hover: hover) {
@@ -105,7 +108,7 @@ function toggleDropdown(event) {
 	color: var(--font-color);
 	text-align: center;
 	z-index: 2;
-	left: -200%;
+	left: -150%;
 	top:140%;
 	width: 13rem;
 	border-radius: 5px;
