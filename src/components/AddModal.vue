@@ -4,6 +4,9 @@ import { useDatabaseStore } from '@/stores/database';
 import { updateItem } from '@/database_interaction/dbAccess';
 import { ref } from 'vue';
 
+// Update the store on startup
+await useDatabaseStore().update();
+
 const props = defineProps(['item', 'fullEdit']);
 let newItem = ref(props.item);
 
@@ -37,6 +40,14 @@ async function submitModal() {
 		itemForm.append("tags", JSON.stringify(newItem.value.tags));
 		itemForm.append("favorite", favorite);
 		itemForm.append("deleted", false);
+
+		// Guarantee a barcode is being given
+		if (itemForm.get("barcode") == "")
+		{
+			console.info(modal.querySelector('#code').value);
+			throw new Error("No Barcode");
+		}
+
 
 		// Update the database
 		console.info(itemForm);

@@ -146,7 +146,15 @@ function update_table()
 				$dbh->beginTransaction();
 
 				$stmt = $dbh->prepare("INSERT INTO $tableName (barcode, given_name, off_name, number, allergens, tags, favorite) VALUES (:barcode, :given_name, :off_name, :number, :allergens, :tags, :favorite) RETURNING *");
-				$stmt->execute(['barcode' => [$_POST['barcode']], 'given_name' => [$_POST['given_name']], 'off_name' => [$_POST['off_name']], 'number' => [$_POST['number']], 'allergens' => [json_encode($_POST['allergens'])], 'tags' => [json_encode($_POST['tags'])], 'favorite' => [$_POST['favorite']]]);
+				// $stmt->execute(['barcode' => [$_POST['barcode']], 'given_name' => [$_POST['given_name']], 'off_name' => [$_POST['off_name']], 'number' => [$_POST['number']], 'allergens' => [$_POST['allergens']], 'tags' => [$_POST['tags']], 'favorite' => [$_POST['favorite']]]);
+				$stmt->bindParam('barcode', $_POST['barcode']);
+				$stmt->bindParam('given_name', $_POST['given_name']);
+				$stmt->bindParam('off_name', $_POST['off_name']);
+				$stmt->bindParam('number', $_POST['number']);
+				$stmt->bindParam('allergens', $_POST['allergens']);
+				$stmt->bindParam('tags', $_POST['tags']);
+				$stmt->bindParam('favorite', $_POST['favorite']);				
+				$stmt->execute();
 
 				$response += ['Added' => $stmt->fetch(PDO::FETCH_ASSOC)];
 				$dbh->commit();
@@ -155,10 +163,11 @@ function update_table()
 				$response += ['error' => $e->getMessage() . ' at line ' . $e->getLine()];
 			}
 			// If the item has deleted as true, remove the item
-		} elseif ($_POST['deleted'] == false) {
+		} elseif ($_POST['deleted'] == 'true') {
 			try {
 				$dbh->beginTransaction();
 
+				$response += ['DeleteState' => $_POST['deleted']];
 				$stmt = $dbh->prepare("DELETE FROM $tableName WHERE $tableName.barcode = ?");
 				$stmt->execute([$_POST['barcode']]);
 
@@ -174,8 +183,15 @@ function update_table()
 				$dbh->beginTransaction();
 
 				$stmt = $dbh->prepare("UPDATE $tableName SET given_name = :given_name, off_name = :off_name, number = :number, allergens = :allergens, tags = :tags, favorite = :favorite WHERE barcode = :barcode RETURNING *");
-				$stmt->execute(['barcode' => $_POST['barcode'], 'given_name' => $_POST['given_name'], 'off_name' => $_POST['off_name'], 'number' => $_POST['number'], 'allergens' => json_encode(json_decode($_POST['allergens'])), 'tags' => json_encode(json_decode($_POST['tags'])), 'favorite' => $_POST['favorite']]);
-
+				$stmt->bindParam('barcode', $_POST['barcode']);
+				$stmt->bindParam('given_name', $_POST['given_name']);
+				$stmt->bindParam('off_name', $_POST['off_name']);
+				$stmt->bindParam('number', $_POST['number']);
+				$stmt->bindParam('allergens', $_POST['allergens']);
+				$stmt->bindParam('tags', $_POST['tags']);
+				$stmt->bindParam('favorite', $_POST['favorite']);				
+				$stmt->execute();
+				
 				$response += ['Updated' => $stmt->fetch(PDO::FETCH_ASSOC)];
 				$dbh->commit();
 			} catch (Exception $e) {
@@ -189,3 +205,19 @@ function update_table()
 }
 
 echo json_encode($response);
+
+// Convert the passed array to a JSON string, and an empty sting if the array is empty
+function array_to_string($array): string
+{
+	global $response;
+	$output_string = "";
+	try {
+		if (count(json_decode($array)) > 0)
+		{
+			$output_string = json_encode(json_decode($array));
+		}
+	} catch (Exception $e) {
+		$response += ['error' => $e->getMessage() . ' at line ' . $e->getLine()];
+	}
+	return $output_string;
+}

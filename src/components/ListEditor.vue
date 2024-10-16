@@ -2,9 +2,9 @@
 import { useDatabaseStore } from '@/stores/database';
 import { ref } from 'vue';
 const props = defineProps(['type', 'list']);
-console.log(props.list);
+// console.log(props.list);
 const fullTagList = ref(useDatabaseStore().tagList(props.type));
-console.log(fullTagList.value);
+// console.log(fullTagList.value);
 
 function remove(tag) {
 	const i = props.list.indexOf(tag);
