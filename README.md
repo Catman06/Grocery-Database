@@ -1,5 +1,6 @@
 # Grocery Database
-<h4>This project will be the site that interacts with a postgresql database that holds information on owned groceries.</h4> 
+<h4>This is the site that interacts with a postgresql database that holds information on owned groceries.</h4>
+Will not function with out changes to stuff like urls for php and the database being used
 <p>
   It will primarily consist of 2 parts: the scanner & the table.<br>
 The scanner will provide an interface for using a device camera to scan an item's barcode, retrieve info from the <a href="https://github.com/openfoodfacts/openfoodfacts-server">Open Food Fact database</a>, and store the relevent info into our database.<br>
